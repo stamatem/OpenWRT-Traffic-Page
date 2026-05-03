@@ -1,11 +1,11 @@
 #!/bin/busybox sh
 
-echo "[Bandix-Page] Removing..."
+echo "[Traffic-Page] Removing..."
 
 # -------------------------
-# remove bandix cron entries
+# remove Traffic cron entries
 # -------------------------
-[ -f /etc/crontabs/root ] && sed -i '/bandix-quota/d' /etc/crontabs/root
+[ -f /etc/crontabs/root ] && sed -i '/traffic-quota/d' /etc/crontabs/root
 
 # restart cron to apply changes
 /etc/init.d/cron restart 2>/dev/null
@@ -27,7 +27,7 @@ done
 if [ "$WIFI_CHANGED" = "1" ]; then
     uci commit wireless 2>/dev/null
     wifi reload >/dev/null 2>&1 || wifi >/dev/null 2>&1
-    echo "[Bandix-Page] Wireless removed"
+    echo "[Traffic-Page] Wireless removed"
 fi
 
 # -------------------------
@@ -57,7 +57,7 @@ done
 if [ "$NET_CHANGED" = "1" ]; then
     uci commit network 2>/dev/null
     /etc/init.d/network reload >/dev/null 2>&1
-    echo "[Bandix-Page] Network removed"
+    echo "[Traffic-Page] Network removed"
 fi
 
 # -------------------------
@@ -109,7 +109,7 @@ for IDX in $(uci show firewall 2>/dev/null | awk -F'[.=]' -v zone="$TRAFFIC_IFAC
 done
 
 # -------------------------
-# remove Bandix firewall rules
+# remove Traffic firewall rules
 # -------------------------
 
 for IDX in $(uci show firewall 2>/dev/null | awk -F'[.=]' '
@@ -119,10 +119,10 @@ for IDX in $(uci show firewall 2>/dev/null | awk -F'[.=]' '
         sub(/^[^=]*=/, "", name)
         gsub(/\047/, "", name)
 
-        if (name == "bandix_page" ||
-            name == "bandix_block" ||
-            name == "bandix_allowed" ||
-            name == "bandix_unknown") {
+        if (name == "traffic_page" ||
+            name == "traffic_block" ||
+            name == "traffic_allowed" ||
+            name == "traffic_unknown") {
             idx=section
             gsub(/@rule\[|\]/, "", idx)
             print idx
@@ -160,11 +160,11 @@ done
 if [ "$FW_CHANGED" = "1" ]; then
     uci commit firewall 2>/dev/null
     /etc/init.d/firewall reload >/dev/null 2>&1
-    echo "[Bandix-Page] Firewall rules removed"
+    echo "[Traffic-Page] Firewall rules removed"
 fi
 
 # -------------------------
-# remove Bandix DHCP hosts
+# remove Traffic DHCP hosts
 # -------------------------
 DHCP_CHANGED=0
 
@@ -175,7 +175,7 @@ for IDX in $(uci show dhcp 2>/dev/null | awk -F'[.=]' '
         sub(/^[^=]*=/, "", value)
         gsub(/\047/, "", value)
 
-        if (value == "bandix") {
+        if (value == "traffic") {
             idx=section
             gsub(/@host\[|\]/, "", idx)
             print idx
@@ -191,7 +191,7 @@ if [ "$DHCP_CHANGED" = "1" ]; then
     uci commit dhcp 2>/dev/null
     ubus call service reload '{"name":"dnsmasq"}' >/dev/null 2>&1 \
         || /etc/init.d/dnsmasq restart >/dev/null 2>&1
-    echo "[Bandix-Page] DHCP hosts removed"
+    echo "[Traffic-Page] DHCP hosts removed"
 fi
 
 # -------------------------
@@ -204,28 +204,28 @@ uci -q delete bandix.traffic 2>/dev/null && BANDIX_CHANGED=1
 
 if [ "$BANDIX_CHANGED" = "1" ]; then
     uci commit bandix 2>/dev/null
-    echo "[Bandix-Page] Bandix config removed"
+    echo "[Traffic-Page] Bandix config removed"
 fi
 
 # -------------------------
 # remove symlinks
 # -------------------------
-rm -f /www/data/bandix-buffer.json
-rm -f /www/data/bandixquota.log
+rm -f /www/data/traffic-buffer.json
+rm -f /www/data/trafficquota.log
 
 # -------------------------
-# delete bandix data files
+# delete Traffic data files
 # -------------------------
 rm -f /www/data/users.json
 rm -f /www/data/users-pay.json
-rm -f /www/data/bandix-public.json
-rm -f /usr/share/bandix-page.json
+rm -f /www/data/traffic-public.json
+rm -f /usr/share/traffic-page.json
 
 # -------------------------
 # remove temp directory
 # -------------------------
-[ -d /tmp/bandixpage ] && rm -rf /tmp/bandixpage
+[ -d /tmp/trafficpage ] && rm -rf /tmp/trafficpage
 
-echo "[Bandix-Page] Uninstalled"
+echo "[Traffic-Page] Uninstalled"
 
 exit 0
