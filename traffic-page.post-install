@@ -247,7 +247,6 @@ uci set dhcp.$TRAFFIC_IFACE.start='10'
 uci set dhcp.$TRAFFIC_IFACE.limit='150'
 uci set dhcp.$TRAFFIC_IFACE.leasetime='infinite'
 uci set dhcp.$TRAFFIC_IFACE.dhcpv4='server'
-uci set dhcp.$TRAFFIC_IFACE.dynamicdhcp='0'
 uci delete dhcp.$TRAFFIC_IFACE.dhcp_option 2>/dev/null
 uci add_list dhcp.$TRAFFIC_IFACE.dhcp_option="6,$TRAFFIC_DNS"
 
