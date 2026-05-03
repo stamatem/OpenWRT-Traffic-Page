@@ -1,5 +1,5 @@
-pkgname=bandix-page
-pkgver=2.0.0
+pkgname=traffic-page
+pkgver=1.0.0
 pkgrel=0
 pkgdesc="Bandix OpenWRT Web UI & Quota Management"
 url="https://github.com/stamatem/Bandix-Page"
@@ -16,7 +16,7 @@ subpackages=""
 
 options="!check !tracedeps !strip"
 
-install="bandix-page.post-install bandix-page.post-deinstall"
+install="traffic-page.post-install traffic-page.post-deinstall"
 
 builddir="$PWD"
 
