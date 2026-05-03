@@ -37,14 +37,14 @@ eval "$(
         def shq: @sh;
         "MULT=" + ((._multiplier // 1) | tostring | shq),
         "ZONE=" + ((._zone // "lan") | tostring | shq),
-        "NETWORK=" + ((._network // "192.168.1") | tostring | shq),
+        "NETWORK=" + ((._network // "10.99.100") | tostring | shq),
         "NO_BLOCK=" + ((._no_block // "") | tostring | shq)
     ' "$USERS_FILE"
 )"
 
 case "$NETWORK" in
     [0-9]*.[0-9]*.[0-9]*) ;;
-    *) NETWORK="192.168.1" ;;
+    *) NETWORK="10.99.100" ;;
 esac
 ROUTER_IP="$NETWORK.1"
 
