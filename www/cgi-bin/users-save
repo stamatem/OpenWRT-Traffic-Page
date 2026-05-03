@@ -196,15 +196,31 @@ add_dhcp_leases() {
                 user_index++
             }
 
-            last=base + mac_index
+            # preferred IP inside block
+            preferred = base + mac_index
 
-            if (last < 10 || last > 254) {
+            # use preferred if free
+            if (preferred >= 10 && preferred <= 254 && !used[preferred]) {
+                last = preferred
+            } else {
+                # fallback → first free IP
+                for (i = 10; i <= 254; i++) {
+                    if (!used[i]) {
+                        last = i
+                        break
+                    }
+                }
+            }
+
+            if (!last) {
                 mac_index++
                 next
             }
 
-            ip=network "." last
-            name=user "-" (mac_index + 1)
+            used[last] = 1
+
+            ip = network "." last
+            name = user "-" (mac_index + 1)
 
             print "add dhcp host"
             print "set dhcp.@host[-1].name=" name
@@ -271,12 +287,25 @@ generate_dhcp_fp() {
                 user_index++
             }
 
-            last=base + mac_index
+            preferred = base + mac_index
 
-            if (last < 10 || last > 254) {
+            if (preferred >= 10 && preferred <= 254 && !used[preferred]) {
+                last = preferred
+            } else {
+                for (i = 10; i <= 254; i++) {
+                    if (!used[i]) {
+                        last = i
+                        break
+                    }
+                }
+            }
+
+            if (!last) {
                 mac_index++
                 next
             }
+
+            used[last] = 1
 
             printf "%s-%d|%s|%s.%d\n", user, mac_index + 1, mac, checked_network(), last
             mac_index++
