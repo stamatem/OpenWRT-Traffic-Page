@@ -1,21 +1,21 @@
 #!/bin/busybox sh
 
-TMP_BASE="/tmp/bandixpage"
+TMP_BASE="/tmp/trafficpage"
 LOG_DIR="$TMP_BASE"
 
 mkdir -p "$TMP_BASE"
 
-LOG="$LOG_DIR/bandixusers.log"
-LOCK="$TMP_BASE/bandix-users.lock"
+LOG="$LOG_DIR/trafficusers.log"
+LOCK="$TMP_BASE/traffic-users.lock"
 
 DATA_FILE="/www/data/users.json"
-PAY_FILE="/usr/share/bandix-page.json"
+PAY_FILE="/usr/share/traffic-page.json"
 PAID_FILE="/www/data/users-pay.json"
 PAID_CLEAN_TMP="$TMP_BASE/users-pay.clean.tmp"
 TMP_FILE="$TMP_BASE/users.json.tmp"
 POST_FILE="$TMP_BASE/users.post.$$"
-CACHE="$TMP_BASE/bandix.cache"
-TMP_UCI="$TMP_BASE/bandix.uci"
+CACHE="$TMP_BASE/traffic.cache"
+TMP_UCI="$TMP_BASE/traffic.uci"
 MAX_SIZE=65536
 
 echo "RUN $(date)" > "$LOG"
@@ -30,13 +30,13 @@ respond() {
 if [ -d "$LOCK" ]; then
     AGE=$(( $(date +%s) - $(stat -c %Y "$LOCK" 2>/dev/null || echo 0) ))
     if [ "$AGE" -gt 30 ]; then
-        echo "[Bandix-Page] REMOVE STALE LOCK" >> "$LOG"
+        echo "[Traffic-Page] REMOVE STALE LOCK" >> "$LOG"
         rm -rf "$LOCK"
     fi
 fi
 
 if ! mkdir "$LOCK" 2>/dev/null; then
-    echo "[Bandix-Page] LOCKED" >> "$LOG"
+    echo "[Traffic-Page] LOCKED" >> "$LOG"
     respond '{"status":"error","message":"locked"}'
     exit 0
 fi
@@ -57,8 +57,8 @@ ensure_symlink() {
 }
 
 mkdir -p /www/data
-ensure_symlink "$TMP_BASE/bandix-buffer.json" "/www/data/bandix-buffer.json"
-ensure_symlink "$TMP_BASE/bandixquota.log" "/www/data/bandixquota.log"
+ensure_symlink "$TMP_BASE/traffic-buffer.json" "/www/data/traffic-buffer.json"
+ensure_symlink "$TMP_BASE/trafficquota.log" "/www/data/trafficquota.log"
 
 # --- LOAD PASSWORD ---
 if [ ! -f "$PAY_FILE" ]; then
@@ -173,7 +173,7 @@ add_dhcp_leases() {
             value=$0
             sub(/^[^=]*=/, "", value)
             gsub(/\047/, "", value)
-            if (value == "bandix") {
+            if (value == "traffic") {
                 idx=$2
                 gsub(/@host\[|\]/, "", idx)
                 print idx
@@ -211,7 +211,7 @@ add_dhcp_leases() {
             print "set dhcp.@host[-1].mac=" mac
             print "set dhcp.@host[-1].ip=" ip
             print "set dhcp.@host[-1].leasetime=infinite"
-            print "set dhcp.@host[-1].tag=bandix"
+            print "set dhcp.@host[-1].tag=traffic"
 
             mac_index++
         }
@@ -220,12 +220,12 @@ add_dhcp_leases() {
     # Split delete and add into separate batches to avoid index shifting aborts
     grep '^delete' "$TMP_UCI" | uci batch >/dev/null 2>&1
     grep -v '^delete' "$TMP_UCI" | uci batch >/dev/null 2>&1 || {
-        echo "[Bandix-Page] uci batch add failed" >> "$LOG"
+        echo "[Traffic-Page] uci batch add failed" >> "$LOG"
         return 1
     }
 
     if ! uci commit dhcp >/dev/null 2>&1; then
-        echo "[Bandix-Page] uci commit failed" >> "$LOG"
+        echo "[Traffic-Page] uci commit failed" >> "$LOG"
         return 1
     fi
 
@@ -323,16 +323,16 @@ update_cron() {
     TMP_CRON="$TMP_BASE/root.cron.tmp"
 
     if [ -f "$CRON_FILE" ]; then
-        grep -v 'bandix-quota' "$CRON_FILE" > "$TMP_CRON"
+        grep -v 'traffic-quota' "$CRON_FILE" > "$TMP_CRON"
     else
         : > "$TMP_CRON"
     fi
 
-    echo "*/$REFRESH * * * * /usr/bin/bandix-quota" >> "$TMP_CRON"
+    echo "*/$REFRESH * * * * /usr/bin/traffic-quota" >> "$TMP_CRON"
 
     if cmp -s "$TMP_CRON" "$CRON_FILE" 2>/dev/null; then
         rm -f "$TMP_CRON"
-        echo "[Bandix-Page] cron already correct" >> "$LOG"
+        echo "[Traffic-Page] cron already correct" >> "$LOG"
         return 0
     fi
 
@@ -357,7 +357,7 @@ generate_actual_dhcp_fp() {
 
         END {
             for (section in sections) {
-                if (data[section,"tag"] == "bandix" &&
+                if (data[section,"tag"] == "traffic" &&
                     data[section,"name"] != "" &&
                     data[section,"mac"] != "" &&
                     data[section,"ip"] != "") {
@@ -397,12 +397,12 @@ if [ "$ACTION" = "cleanup" ]; then
         exit 1
     }
 
-    echo "[Bandix-Page] CLEANUP TRIGGERED" >> "$LOG"
+    echo "[Traffic-Page] CLEANUP TRIGGERED" >> "$LOG"
 
     rm -rf /usr/share/bandix/* 2>> "$LOG"
 
     /etc/init.d/bandix restart >> "$LOG" 2>&1 || {
-        echo "[Bandix-Page] restart failed" >> "$LOG"
+        echo "[Traffic-Page] restart failed" >> "$LOG"
         respond '{"status":"error","message":"restart_failed"}'
         exit 1
     }
@@ -435,15 +435,15 @@ mkdir -p /www/data
 
 if ! cmp -s "$TMP_FILE" "$DATA_FILE" 2>/dev/null; then
     cp "$TMP_FILE" "$DATA_FILE" || exit 1
-    echo "[Bandix-Page] users.json changed" >> "$LOG"
+    echo "[Traffic-Page] users.json changed" >> "$LOG"
 else
-    echo "[Bandix-Page] users.json unchanged" >> "$LOG"
+    echo "[Traffic-Page] users.json unchanged" >> "$LOG"
 fi
 
 clean_paid_users
 
 build_cache || {
-    echo "[Bandix-Page] build_cache failed" >> "$LOG"
+    echo "[Traffic-Page] build_cache failed" >> "$LOG"
     respond '{"status":"error","message":"cache_failed"}'
     exit 1
 }
@@ -451,13 +451,13 @@ build_cache || {
 cat "$CACHE" >> "$LOG"
 
 [ -s "$DATA_FILE" ] || {
-    echo "[Bandix-Page] ERROR: users.json empty" >> "$LOG"
+    echo "[Traffic-Page] ERROR: users.json empty" >> "$LOG"
     exit 1
 }
 
-DHCP_FP_FILE="$TMP_BASE/bandix_dhcp.fp"
-REFRESH_FP_FILE="$TMP_BASE/bandix_refresh.fp"
-QUOTA_FP_FILE="$TMP_BASE/bandix_quota.fp"
+DHCP_FP_FILE="$TMP_BASE/traffic_dhcp.fp"
+REFRESH_FP_FILE="$TMP_BASE/traffic_refresh.fp"
+QUOTA_FP_FILE="$TMP_BASE/traffic_quota.fp"
 
 NEW_QUOTA_FP="$(generate_quota_fp)"
 OLD_QUOTA_FP="$(cat "$QUOTA_FP_FILE" 2>/dev/null)"
@@ -472,37 +472,37 @@ OLD_REFRESH="$(cat "$REFRESH_FP_FILE" 2>/dev/null)"
 
 # ---- DHCP changes ----
 if [ "$NEW_DHCP_FP" != "$OLD_DHCP_FP" ] || [ "$NEW_DHCP_FP" != "$ACTUAL_DHCP_FP" ]; then
-    echo "[Bandix-Page] DHCP changed/missing -> rebuilding" >> "$LOG"
+    echo "[Traffic-Page] DHCP changed/missing -> rebuilding" >> "$LOG"
 
     if add_dhcp_leases; then
         echo "$NEW_DHCP_FP" > "$DHCP_FP_FILE"
     else
-        echo "[Bandix-Page] DHCP rebuild failed" >> "$LOG"
+        echo "[Traffic-Page] DHCP rebuild failed" >> "$LOG"
         respond '{"status":"error","message":"dhcp_failed"}'
         exit 1
     fi
 else
-    echo "[Bandix-Page] DHCP unchanged" >> "$LOG"
+    echo "[Traffic-Page] DHCP unchanged" >> "$LOG"
 fi
 
 # ---- REFRESH changes ----
 if [ "$NEW_REFRESH" != "$OLD_REFRESH" ]; then
-    echo "[Bandix-Page] REFRESH changed -> updating cron" >> "$LOG"
+    echo "[Traffic-Page] REFRESH changed -> updating cron" >> "$LOG"
 
     update_cron
     echo "$NEW_REFRESH" > "$REFRESH_FP_FILE"
 else
-    echo "[Bandix-Page] REFRESH unchanged" >> "$LOG"
+    echo "[Traffic-Page] REFRESH unchanged" >> "$LOG"
 fi
 
 # ---- QUOTA changes ----
 if [ "$NEW_QUOTA_FP" != "$OLD_QUOTA_FP" ]; then
-    echo "[Bandix-Page] QUOTA changed -> applying" >> "$LOG"
+    echo "[Traffic-Page] QUOTA changed -> applying" >> "$LOG"
 
-    /usr/bin/bandix-quota force >> "$LOG" 2>&1 || true
+    /usr/bin/traffic-quota force >> "$LOG" 2>&1 || true
     echo "$NEW_QUOTA_FP" > "$QUOTA_FP_FILE"
 else
-    echo "[Bandix-Page] QUOTA unchanged" >> "$LOG"
+    echo "[Traffic-Page] QUOTA unchanged" >> "$LOG"
 fi
 
 respond '{"status":"ok"}'
