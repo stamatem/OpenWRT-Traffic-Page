@@ -1541,7 +1541,7 @@ async function changePassword() {
 
 async function checkQuotaScript() {
   try {
-    const res = await fetch('/data/bandixquota.log?t=' + Date.now());
+    const res = await fetch('/data/trafficquota.log?t=' + Date.now());
     const text = await res.text();
 
     const dot = document.getElementById('statusDot');
