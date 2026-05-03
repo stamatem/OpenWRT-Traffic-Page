@@ -134,18 +134,6 @@ fi
 
 uci commit wireless 2>/dev/null
 
-# Firewall defaults
-if uci -q get firewall.@defaults[0] >/dev/null 2>&1; then
-    FW_DEFAULTS='@defaults[0]'
-else
-    FW_DEFAULTS="$(uci add firewall defaults)"
-fi
-
-uci set firewall.$FW_DEFAULTS.input='ACCEPT'
-uci set firewall.$FW_DEFAULTS.output='ACCEPT'
-uci set firewall.$FW_DEFAULTS.forward='ACCEPT'
-uci set firewall.$FW_DEFAULTS.synflood_protect='1'
-
 # Firewall zone
 FW_ZONE="$(find_firewall_zone)"
 [ -n "$FW_ZONE" ] || FW_ZONE="$(uci add firewall zone)"
@@ -157,6 +145,19 @@ uci set firewall.$FW_ZONE.forward='REJECT'
 uci delete firewall.$FW_ZONE.network 2>/dev/null
 uci add_list firewall.$FW_ZONE.network="$TRAFFIC_IFACE"
 
+# Firewall page/admin access rule
+PAGE_RULE="$(find_firewall_rule 'bandix_page')"
+[ -n "$PAGE_RULE" ] || PAGE_RULE="$(uci add firewall rule)"
+
+uci set firewall.$PAGE_RULE.name='bandix_page'
+uci set firewall.$PAGE_RULE.src="$TRAFFIC_IFACE"
+uci delete firewall.$PAGE_RULE.dest 2>/dev/null
+uci set firewall.$PAGE_RULE.dest_ip="$TRAFFIC_IP"
+uci set firewall.$PAGE_RULE.dest_port='22 80 443'
+uci set firewall.$PAGE_RULE.proto='tcp'
+uci set firewall.$PAGE_RULE.target='ACCEPT'
+uci set firewall.$PAGE_RULE.enabled='1'
+
 # Firewall DNS rule
 DNS_RULE="$(find_firewall_rule 'allow-dns-guest')"
 [ -n "$DNS_RULE" ] || DNS_RULE="$(uci add firewall rule)"
@@ -164,6 +165,7 @@ DNS_RULE="$(find_firewall_rule 'allow-dns-guest')"
 uci set firewall.$DNS_RULE.src="$TRAFFIC_IFACE"
 uci set firewall.$DNS_RULE.name='allow-dns-guest'
 uci set firewall.$DNS_RULE.dest_port='53 853'
+uci set firewall.$DNS_RULE.proto='tcpudp'
 uci set firewall.$DNS_RULE.target='ACCEPT'
 
 # Firewall DHCP rule
@@ -173,7 +175,26 @@ DHCP_RULE="$(find_firewall_rule 'allow-dhcp-guest')"
 uci set firewall.$DHCP_RULE.src="$TRAFFIC_IFACE"
 uci set firewall.$DHCP_RULE.name='allow-dhcp-guest'
 uci set firewall.$DHCP_RULE.dest_port='67 68'
+uci set firewall.$DHCP_RULE.proto='udp'
 uci set firewall.$DHCP_RULE.target='ACCEPT'
+
+LAN_ZONE="$(uci show firewall 2>/dev/null | awk -F'[.=]' '
+    /^firewall\.@zone\[[0-9]+\]\.name=/ {
+        section=$2
+        value=$0
+        sub(/^[^=]*=/, "", value)
+        gsub(/\047/, "", value)
+
+        if (value == "lan") {
+            print section
+            exit
+        }
+    }
+')"
+
+if [ -n "$LAN_ZONE" ]; then
+    uci set firewall.$LAN_ZONE.masq='1'
+fi
 
 uci commit firewall
 
