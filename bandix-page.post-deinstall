@@ -66,7 +66,7 @@ fi
 FW_CHANGED=0
 
 for IDX in $(uci show firewall 2>/dev/null | awk -F'[.=]' -v src="$TRAFFIC_IFACE" '
-    /^firewall\.@rule\[[0-9]+\]\./ {
+    /^firewall\.@forwarding\[[0-9]+\]\./ {
         section=$2
         prop=$3
         value=$0
@@ -80,16 +80,15 @@ for IDX in $(uci show firewall 2>/dev/null | awk -F'[.=]' -v src="$TRAFFIC_IFACE
     END {
         for (section in sections) {
             if (data[section,"src"] == src &&
-                (data[section,"name"] == "allow-dns-guest" ||
-                 data[section,"name"] == "allow-dhcp-guest")) {
+               (data[section,"dest"] == "lan" || data[section,"dest"] == "wan")) {
                 idx=section
-                gsub(/@rule\[|\]/, "", idx)
+                gsub(/@forwarding\[|\]/, "", idx)
                 print idx
             }
         }
     }
 ' | sort -rn); do
-    uci delete firewall.@rule[$IDX] 2>/dev/null && FW_CHANGED=1
+    uci delete firewall.@forwarding[$IDX] 2>/dev/null && FW_CHANGED=1
 done
 
 for IDX in $(uci show firewall 2>/dev/null | awk -F'[.=]' -v zone="$TRAFFIC_IFACE" '
