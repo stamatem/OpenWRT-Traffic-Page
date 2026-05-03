@@ -27,6 +27,187 @@ fi
 ln -sf /tmp/bandixpage/bandix-buffer.json /www/data/bandix-buffer.json
 ln -sf /tmp/bandixpage/bandixquota.log /www/data/bandixquota.log
 
+# -------------------------
+# OpenWrt TRAFFIC_PAGE config
+# -------------------------
+
+TRAFFIC_IFACE="TRAFFIC_PAGE"
+TRAFFIC_IP="192.168.50.1"
+TRAFFIC_NETMASK="255.255.255.0"
+TRAFFIC_DNS="8.8.8.8"
+
+find_network_device() {
+    uci show network 2>/dev/null | awk -F'[.=]' -v dev="$TRAFFIC_IFACE" '
+        /\.name=/ {
+            section=$2
+            value=$0
+            sub(/^[^=]*=/, "", value)
+            gsub(/\047/, "", value)
+            if (value == dev) {
+                print section
+                exit
+            }
+        }
+    '
+}
+
+find_firewall_zone() {
+    uci show firewall 2>/dev/null | awk -F'[.=]' -v zone="$TRAFFIC_IFACE" '
+        /\.name=/ {
+            section=$2
+            value=$0
+            sub(/^[^=]*=/, "", value)
+            gsub(/\047/, "", value)
+            if (value == zone) {
+                print section
+                exit
+            }
+        }
+    '
+}
+
+find_firewall_rule() {
+    NAME="$1"
+
+    uci show firewall 2>/dev/null | awk -F'[.=]' -v name="$NAME" -v src="$TRAFFIC_IFACE" '
+        /^firewall\.@rule\[[0-9]+\]\./ {
+            section=$2
+            prop=$3
+            value=$0
+            sub(/^[^=]*=/, "", value)
+            gsub(/\047/, "", value)
+
+            data[section,prop]=value
+            sections[section]=1
+        }
+
+        END {
+            for (section in sections) {
+                if (data[section,"name"] == name && data[section,"src"] == src) {
+                    print section
+                    exit
+                }
+            }
+        }
+    '
+}
+
+# Network bridge device
+NET_DEV="$(find_network_device)"
+[ -n "$NET_DEV" ] || NET_DEV="$(uci add network device)"
+
+uci set network.$NET_DEV.type='bridge'
+uci set network.$NET_DEV.name="$TRAFFIC_IFACE"
+uci set network.$NET_DEV.bridge_empty='1'
+uci set network.$NET_DEV.ipv6='0'
+
+# Network interface
+uci set network.$TRAFFIC_IFACE='interface'
+uci set network.$TRAFFIC_IFACE.proto='static'
+uci set network.$TRAFFIC_IFACE.device="$TRAFFIC_IFACE"
+uci set network.$TRAFFIC_IFACE.ipaddr="$TRAFFIC_IP"
+uci set network.$TRAFFIC_IFACE.netmask="$TRAFFIC_NETMASK"
+uci set network.$TRAFFIC_IFACE.multipath='off'
+uci delete network.$TRAFFIC_IFACE.dns 2>/dev/null
+uci add_list network.$TRAFFIC_IFACE.dns="$TRAFFIC_DNS"
+
+uci commit network
+
+# Wireless SSIDs
+if uci -q get wireless.radio1 >/dev/null 2>&1; then
+    uci set wireless.wifinet30='wifi-iface'
+    uci set wireless.wifinet30.device='radio1'
+    uci set wireless.wifinet30.mode='ap'
+    uci set wireless.wifinet30.ssid="$TRAFFIC_IFACE"
+    uci set wireless.wifinet30.encryption='none'
+    uci set wireless.wifinet30.network="$TRAFFIC_IFACE"
+fi
+
+if uci -q get wireless.radio0 >/dev/null 2>&1; then
+    uci set wireless.wifinet31='wifi-iface'
+    uci set wireless.wifinet31.device='radio0'
+    uci set wireless.wifinet31.mode='ap'
+    uci set wireless.wifinet31.ssid="$TRAFFIC_IFACE"
+    uci set wireless.wifinet31.encryption='none'
+    uci set wireless.wifinet31.network="$TRAFFIC_IFACE"
+fi
+
+uci commit wireless 2>/dev/null
+
+# Firewall defaults
+if uci -q get firewall.@defaults[0] >/dev/null 2>&1; then
+    FW_DEFAULTS='@defaults[0]'
+else
+    FW_DEFAULTS="$(uci add firewall defaults)"
+fi
+
+uci set firewall.$FW_DEFAULTS.input='ACCEPT'
+uci set firewall.$FW_DEFAULTS.output='ACCEPT'
+uci set firewall.$FW_DEFAULTS.forward='ACCEPT'
+uci set firewall.$FW_DEFAULTS.synflood_protect='1'
+
+# Firewall zone
+FW_ZONE="$(find_firewall_zone)"
+[ -n "$FW_ZONE" ] || FW_ZONE="$(uci add firewall zone)"
+
+uci set firewall.$FW_ZONE.name="$TRAFFIC_IFACE"
+uci set firewall.$FW_ZONE.input='REJECT'
+uci set firewall.$FW_ZONE.output='ACCEPT'
+uci set firewall.$FW_ZONE.forward='REJECT'
+uci delete firewall.$FW_ZONE.network 2>/dev/null
+uci add_list firewall.$FW_ZONE.network="$TRAFFIC_IFACE"
+
+# Firewall DNS rule
+DNS_RULE="$(find_firewall_rule 'allow-dns-guest')"
+[ -n "$DNS_RULE" ] || DNS_RULE="$(uci add firewall rule)"
+
+uci set firewall.$DNS_RULE.src="$TRAFFIC_IFACE"
+uci set firewall.$DNS_RULE.name='allow-dns-guest'
+uci set firewall.$DNS_RULE.dest_port='53 853'
+uci set firewall.$DNS_RULE.target='ACCEPT'
+
+# Firewall DHCP rule
+DHCP_RULE="$(find_firewall_rule 'allow-dhcp-guest')"
+[ -n "$DHCP_RULE" ] || DHCP_RULE="$(uci add firewall rule)"
+
+uci set firewall.$DHCP_RULE.src="$TRAFFIC_IFACE"
+uci set firewall.$DHCP_RULE.name='allow-dhcp-guest'
+uci set firewall.$DHCP_RULE.dest_port='67 68'
+uci set firewall.$DHCP_RULE.target='ACCEPT'
+
+uci commit firewall
+
+# DHCP server
+uci set dhcp.$TRAFFIC_IFACE='dhcp'
+uci set dhcp.$TRAFFIC_IFACE.interface="$TRAFFIC_IFACE"
+uci set dhcp.$TRAFFIC_IFACE.start='10'
+uci set dhcp.$TRAFFIC_IFACE.limit='150'
+uci set dhcp.$TRAFFIC_IFACE.leasetime='infinite'
+uci set dhcp.$TRAFFIC_IFACE.dhcpv4='server'
+uci delete dhcp.$TRAFFIC_IFACE.dhcp_option 2>/dev/null
+uci add_list dhcp.$TRAFFIC_IFACE.dhcp_option="6,$TRAFFIC_DNS"
+
+uci commit dhcp
+
+# Bandix config
+uci set bandix.general='bandix'
+uci set bandix.general.iface="$TRAFFIC_IFACE"
+
+uci set bandix.traffic='bandix'
+uci set bandix.traffic.enabled='1'
+uci set bandix.traffic.traffic_enable_storage='1'
+uci set bandix.traffic.traffic_exclude_iface_device='1'
+uci set bandix.traffic.traffic_flush_interval='300'
+uci set bandix.traffic.traffic_export_url='http://127.0.0.1/cgi-bin/bandix-push'
+
+uci commit bandix
+
+/etc/init.d/network reload >/dev/null 2>&1
+wifi reload >/dev/null 2>&1 || wifi >/dev/null 2>&1
+/etc/init.d/firewall reload >/dev/null 2>&1
+ubus call service reload '{"name":"dnsmasq"}' >/dev/null 2>&1 \
+    || /etc/init.d/dnsmasq restart >/dev/null 2>&1
+
 # Ensure scripts are executable
 [ -d /www/cgi-bin ] && chmod +x /www/cgi-bin/* 2>/dev/null
 [ -f /usr/bin/bandix-quota ] && chmod +x /usr/bin/bandix-quota
