@@ -301,7 +301,7 @@ async function load() {
       payData = await payRes.json();
     } catch(e) {}
 
-    const dataRes = await fetch('/data/bandix-buffer.json?t=' + Date.now());
+    const dataRes = await fetch('/data/traffic-buffer.json?t=' + Date.now());
     if (!dataRes.ok) throw new Error("HTTP " + dataRes.status);
 
     const text = await dataRes.text();
