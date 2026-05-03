@@ -255,6 +255,10 @@ uci commit dhcp
 # Bandix config
 uci set bandix.general='bandix'
 uci set bandix.general.iface="$TRAFFIC_IFACE"
+uci set bandix.general.port='8686'
+uci set bandix.general.log_level='info'
+uci set bandix.general.data_dir='/usr/share/bandix'
+uci set bandix.general.tc_priority='0'
 
 uci set bandix.traffic='bandix'
 uci set bandix.traffic.enabled='1'
@@ -262,6 +266,9 @@ uci set bandix.traffic.traffic_enable_storage='1'
 uci set bandix.traffic.traffic_exclude_iface_device='1'
 uci set bandix.traffic.traffic_flush_interval='300'
 uci set bandix.traffic.traffic_export_url='http://127.0.0.1/cgi-bin/traffic-push'
+uci set bandix.traffic.speed_unit='bytes'
+uci set bandix.traffic.traffic_neighbor_flush_enable='0'
+uci set bandix.traffic.traffic_realtime_window='600'
 
 uci commit bandix
 
