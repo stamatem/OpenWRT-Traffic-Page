@@ -228,6 +228,7 @@ wifi reload >/dev/null 2>&1 || wifi >/dev/null 2>&1
 /etc/init.d/firewall reload >/dev/null 2>&1
 ubus call service reload '{"name":"dnsmasq"}' >/dev/null 2>&1 \
     || /etc/init.d/dnsmasq restart >/dev/null 2>&1
+/etc/init.d/bandix restart >/dev/null 2>&1
 
 # Ensure scripts are executable
 [ -d /www/cgi-bin ] && chmod +x /www/cgi-bin/* 2>/dev/null
