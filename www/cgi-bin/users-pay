@@ -33,7 +33,7 @@ init_file() {
     # Create private password file, migrating old password if it exists
     if [ ! -f "$PASS_FILE" ]; then
         OLD_PASS=$(jsonfilter -i "$DATA_FILE" -e '@.password' 2>/dev/null)
-        [ -z "$OLD_PASS" ] && OLD_PASS="monitor84"
+        [ -z "$OLD_PASS" ] && OLD_PASS="password"
 
         jq -n --arg password "$OLD_PASS" '{password:$password}' > "$PASS_TMP" 2>/dev/null
         chmod 600 "$PASS_TMP" 2>/dev/null
