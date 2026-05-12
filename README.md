@@ -115,7 +115,9 @@ Everything is designed to operate with minimal flash storage wear.
 
 <img width="670" height="525" alt="image" src="https://github.com/user-attachments/assets/528dd452-d3db-42d7-9b60-e28903ad51c1" />
 <br>
+<br>
 <img width="799" height="592" alt="image" src="https://github.com/user-attachments/assets/a19451d9-6033-4bba-953d-53de9c2eb0f9" />
+<br>
 <br>
 <img width="772" height="485" alt="image" src="https://github.com/user-attachments/assets/a521004a-4aae-4c3b-8fca-f79b431540be" />
 
