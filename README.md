@@ -66,11 +66,11 @@ Leave the Firewall Zone as: TRAFFIC_PAGE
 ### Initial Setup
 1. Connect to the TRAFFIC_PAGE Wi-Fi network (or whatever SSID name you configured).
 2. Open your browser and go to: http://10.99.100.1/data/ 
-3. Click the Admin button.
-4. Default admin password: password    (The password can be changed later.)
+3. Click the **Admin** button.
+4. Default admin password: **password**    (The password can be changed later.)
    
 **Important Configuration Notes**
-- Leave the DHCP Subnet unchanged
+- Leave the DHCP Subnet unchanged (unless you know what are you doing)
 - Leave the Firewall Zone unchanged
 
 <br>
