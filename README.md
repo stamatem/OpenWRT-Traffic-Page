@@ -23,6 +23,8 @@ Connect SSH and run:      apk add --allow-untrusted /tmp/upload.apk
 
 ### Install Traffic-Page
 
+https://github.com/stamatem/Traffic-Page/releases
+
 Upload the .apk file through LuCI – System - Software – Upload Package
 
 Connect SSH and run:      apk add --allow-untrusted /tmp/upload.apk
