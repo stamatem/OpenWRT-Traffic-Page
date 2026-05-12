@@ -88,7 +88,7 @@ This prevents unregistered users to get an IP, even if they know the Wi-Fi passw
 <br>
 
 ### Data Quotas
-Assign the desired data quota for each user and press Save.
+Assign the desired data quota for each user and press **Save**.
 
 You may add:
 - Multiple users
@@ -130,8 +130,8 @@ Fixed DHCP leases are also automatically created for every registered MAC addres
 <br> 
 
 ### Additional Automatic Configuration
-- Sets the TRAFFIC_PAGE interface DNS to 8.8.8.8 (You may change this if desired)
-- Creates a cron job for the Quota Engine run interval (The frequency can be modified from the Admin page  - Quota Interval)
+- Sets the TRAFFIC_PAGE interface DNS to **8.8.8.8** (You may change this if desired)
+- Creates a cron job for the Quota Engine run interval (The frequency can be modified from the Admin page  - **Quota Interval**)
 
 <br>
 
