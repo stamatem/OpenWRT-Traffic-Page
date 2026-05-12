@@ -6,7 +6,7 @@
 Bandix Releases:
 https://github.com/timsaya/openwrt-bandix/releases/tag/v0.12.9 
 
-Upload the .apk file through LuCI – System - Software – Upload Package
+Upload the .apk file through: LuCI –> System -> Software –> Upload Package
 
 Connect SSH and run:      apk add --allow-untrusted /tmp/upload.apk
 
@@ -16,7 +16,7 @@ Connect SSH and run:      apk add --allow-untrusted /tmp/upload.apk
 LuCI App Bandix Releases:
 https://github.com/timsaya/luci-app-bandix/releases/tag/v0.12.8 
 
-Upload the .apk file through LuCI – System - Software – Upload Package
+Upload the .apk file through: LuCI –> System -> Software –> Upload Package
 
 Connect SSH and run:      apk add --allow-untrusted /tmp/upload.apk
 
@@ -25,11 +25,11 @@ Connect SSH and run:      apk add --allow-untrusted /tmp/upload.apk
 
 https://github.com/stamatem/Traffic-Page/releases
 
-Upload the .apk file through LuCI – System - Software – Upload Package
+Upload the .apk file through: LuCI –> System -> Software –> Upload Package
 
 Connect SSH and run:      apk add --allow-untrusted /tmp/upload.apk
 
-No additional configuration is required for Bandix itself.
+No additional configuration is required for **Bandix** itself.
 
 All necessary settings are automatically applied during the Traffic-Page installation.
 
