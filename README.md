@@ -83,7 +83,7 @@ Once the first user is created:
 - Dynamic DHCP will be disabled
 - Only registered MAC addresses will receive IP addresses
 
-This prevents unregistered users from accessing the network, even if they know the Wi-Fi password.
+This prevents unregistered users to get an IP, even if they know the Wi-Fi password.
 
 <br>
 
