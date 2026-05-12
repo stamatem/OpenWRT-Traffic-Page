@@ -4,7 +4,7 @@
 ### Install Bandix
 
 Bandix Releases:
-https://github.com/timsaya/openwrt-bandix/releases/tag/v0.12.9 
+https://github.com/timsaya/openwrt-bandix/releases
 
 Upload the .apk file through: LuCI –> System -> Software –> Upload Package
 
@@ -14,7 +14,7 @@ Connect SSH and run:      apk add --allow-untrusted /tmp/upload.apk
 ### Install LuCI App Bandix
 
 LuCI App Bandix Releases:
-https://github.com/timsaya/luci-app-bandix/releases/tag/v0.12.8 
+https://github.com/timsaya/luci-app-bandix/releases
 
 Upload the .apk file through: LuCI –> System -> Software –> Upload Package
 
