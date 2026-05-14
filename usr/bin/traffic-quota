@@ -48,8 +48,8 @@ case "$NETWORK" in
 esac
 ROUTER_IP="$NETWORK.1"
 
-[ "$FORCE" = "1" ] && MODE="CONFIG MODE (FIREWALL REBUILD)" || MODE="NORMAL RUN (NO FIREWALL REBUILD)"
-echo "[Traffic-Quota] $MODE" >> "$LOG"
+[ "$FORCE" = "1" ] && MODE="FORCE RUN" || MODE="NORMAL RUN"
+echo "[Bandix-Quota] $MODE" >> "$LOG"
 
 # --- BUILD MAC -> IP LOOKUP IN ONE UCI PASS ---
 uci show dhcp 2>/dev/null | awk -F'[.=]' '
@@ -424,6 +424,14 @@ else
 fi
 
 # --- SINGLE COMMIT & RELOAD ---
+if [ "$FW_CHANGED" = "1" ]; then
+    echo "[Bandix-Quota] FIREWALL CHANGED" >> "$LOG"
+elif [ "$FORCE" = "1" ]; then
+    echo "[Bandix-Quota] FIREWALL FORCE RELOAD" >> "$LOG"
+else
+    echo "[Bandix-Quota] FIREWALL UNCHANGED" >> "$LOG"
+fi
+
 if [ "$FW_CHANGED" = "1" ] || [ "$FORCE" = "1" ]; then
     if ! uci commit firewall; then
         echo "[Traffic-Quota] FIREWALL COMMIT FAILED!" >> "$LOG"
