@@ -48,8 +48,8 @@ case "$NETWORK" in
 esac
 ROUTER_IP="$NETWORK.1"
 
-[ "$FORCE" = "1" ] && MODE="CONFIG MODE (FIREWALL REBUILD)" || MODE="NORMAL RUN (NO FIREWALL REBUILD)"
-echo "[Traffic-Quota] $MODE" >> "$LOG"
+[ "$FORCE" = "1" ] && MODE="CONFIG MODE" || MODE="NORMAL RUN"
+echo "[Bandix-Quota] $MODE" >> "$LOG"
 
 # --- BUILD MAC -> IP LOOKUP IN ONE UCI PASS ---
 uci show dhcp 2>/dev/null | awk -F'[.=]' '
@@ -390,7 +390,7 @@ ensure_rule() {
 # --- APPLY RULES ---
 if [ "$HAS_USERS" = "1" ]; then
     ensure_rule "traffic_page" "$ZONE" "$ROUTER_IP" "tcp" "ACCEPT" ""
-    ensure_rule "traffic_block" "$ZONE" "*" "all" "REJECT" "$BLOCK_MACS"
+    ensure_rule "traffic_block" "$ZONE" "*" "all" "DROP" "$BLOCK_MACS"
     ensure_rule "traffic_allowed" "$ZONE" "*" "all" "ACCEPT" "$ALLOW_MACS"
     ensure_rule "traffic_unknown" "$ZONE" "*" "all" "REJECT" ""
 
@@ -424,6 +424,13 @@ else
 fi
 
 # --- SINGLE COMMIT & RELOAD ---
+if [ "$FW_CHANGED" = "1" ]; then
+    echo "[Bandix-Quota] FIREWALL CHANGED" >> "$LOG"
+elif [ "$FORCE" = "1" ]; then
+    echo "[Bandix-Quota] FIREWALL FORCE RELOAD" >> "$LOG"
+else
+    echo "[Bandix-Quota] FIREWALL UNCHANGED" >> "$LOG"
+fi
 if [ "$FW_CHANGED" = "1" ] || [ "$FORCE" = "1" ]; then
     if ! uci commit firewall; then
         echo "[Traffic-Quota] FIREWALL COMMIT FAILED!" >> "$LOG"
@@ -452,6 +459,7 @@ if [ -n "$NEW_BLOCK_MACS" ]; then
         if [ -n "$IP" ]; then
             conntrack -D -s "$IP" >/dev/null 2>&1
             conntrack -D -d "$IP" >/dev/null 2>&1
+            ip neigh flush "$IP" >/dev/null 2>&1
             echo "[Traffic-Quota] KILLED CONNECTIONS $MAC ($IP)" >> "$LOG"
         fi
     done
