@@ -203,11 +203,11 @@ h2 {
   background: linear-gradient(
     110deg,
     transparent 30%,
-    rgba(255,255,255,0.2) 50%,
+    rgba(255,255,255,0.3) 50%,
     transparent 70%
   );
   transform: translateX(-100%);
-  animation: sweep 4.5s infinite;
+  animation: sweep 2.5s linear infinite;
 }
 
 @keyframes sweep {
@@ -409,6 +409,7 @@ async function load() {
       grandTotalGB += totalGB;
 
       const quota = users[user].quota ?? 1;
+      const displayGB = quota > 0 ? Math.min(totalGB, quota) : totalGB;
 
       let percent = quota > 0 ? (totalGB / quota) * 100 : (totalGB > 0 ? 100 : 0);
       if (percent > 100) percent = 100;
@@ -467,7 +468,7 @@ async function load() {
         : '';
 
       el.usage.textContent =
-        `${totalGB.toFixed(2)} GB / ${quota} GB (${percent.toFixed(0)}%)`;
+        `${displayGB.toFixed(2)} GB / ${quota} GB (${percent.toFixed(0)}%)`;
 
       el.bar.style.width = percent + '%';
       el.bar.style.background = color;
