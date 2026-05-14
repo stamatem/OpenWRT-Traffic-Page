@@ -3,133 +3,122 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#020617">
 
-<title>Usage</title>
+<title>Admin</title>
 
 <style>
-/* base container */
-#statusDot {
-  display: inline-block;
-}
-
-/* shared dot size */
-.status-dot-green,
-.status-dot-red {
-  width: 14px;
-  height: 14px;
-  border-radius: 50%;
-}
-
-body.paused * {
-  animation-play-state: paused !important;
-}
-
-/* 🟢 green pulsing */
-.status-dot-green {
-  background: #22c55e;
-  animation: pulseGreen 1.6s infinite;
-}
-
-/* 🔴 red static */
-.status-dot-red {
-  background: #ef4444;
-}
-
-/* smooth glow pulse */
-@keyframes pulseGreen {
-  0% {
-    transform: scale(1);
-    box-shadow: 0 0 0 0 rgba(34,197,94,0.7);
-  }
-  70% {
-    transform: scale(1.1);
-    box-shadow: 0 0 10px 6px rgba(34,197,94,0);
-  }
-  100% {
-    transform: scale(1);
-    box-shadow: 0 0 0 0 rgba(34,197,94,0);
-  }
-}
-
-body {
-  background: radial-gradient(circle at top left, #0f172a, #020617 70%);
-  color: white;
-  font-family: -apple-system, BlinkMacSystemFont, "Inter", system-ui, sans-serif;
-  margin: 0;
-  min-height: 100dvh;
-  font-size: 18px;
-
-  padding-top: env(safe-area-inset-top);
-  padding-bottom: env(safe-area-inset-bottom);
-}
-
-body::before {
-  content: "";
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100px;
-  pointer-events: none;
-  background: radial-gradient(circle, rgba(59,130,246,0.08), transparent 70%);
-}
-
 html {
   background: #020617;
 }
 
+body {
+  font-family: sans-serif;
+  color: #ffffff;
+
+  background: radial-gradient(circle at top left, #0f172a, #020617 70%);
+
+  min-height: 100dvh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .container {
-  padding:14px;
-  max-width:600px;
-  margin:auto;
+  max-width: 600px;
+  margin: auto;
+  padding: 12px;
+}
+
+/* 💻 Desktop upgrade */
+@media (min-width: 900px) {
+  .container {
+    max-width: 1100px;   /* 🔥 wider */
+    padding: 20px;
+  }
+}
+
+/* 💻 Desktop grid layout */
+@media (min-width: 900px) {
+  .container {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* 2 columns */
+    gap: 20px;
+  }
+
+  .header {
+    grid-column: 1 / -1; /* full width */
+  }
+
+  #list {
+    grid-column: 1 / -1; /* user list full width */
+  }
 }
 
 .header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 16px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:12px;
 }
 
 h2 {
-  font-size: 24px;
-  font-weight: 700;
-  margin: 0;
-  display: flex;
-  align-items: center;
+  margin:0;
+  font-size:18px;
 }
 
-.admin-btn {
-  background: rgba(30,41,59,0.6);
+.nav-btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+
   padding: 12px 18px;
-  border-radius: 12px;
-  color: #60a5fa;
+  border-radius: 16px;
+
+  color: white;
   text-decoration: none;
   font-size: 18px;
   font-weight: 600;
-  border: 1px solid rgba(96,165,250,0.3);
+
+  background: rgba(15, 23, 42, 0.7);
+  backdrop-filter: blur(14px);
+
+  border: 1px solid rgba(96,165,250,0.25);
 
   box-shadow:
-    0 0 12px rgba(96,165,250,0.4),
-    inset 0 0 6px rgba(255,255,255,0.05);
+    0 0 20px rgba(59,130,246,0.3),
+    0 0 40px rgba(59,130,246,0.15),
+    inset 0 0 10px rgba(255,255,255,0.05);
 
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-.admin-btn:hover {
-  transform: translateY(-1px);
-  box-shadow:
-    0 0 20px rgba(96,165,250,0.6),
-    inset 0 0 8px rgba(255,255,255,0.08);
+.nav-btn::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: 16px;
+
+  background: linear-gradient(
+    120deg,
+    rgba(59,130,246,0.6),
+    rgba(168,85,247,0.4),
+    rgba(59,130,246,0.6)
+  );
+
+  opacity: 0.25;
+  filter: blur(8px);
+  z-index: -1;
 }
 
+/* 🔵 Glass cards (same as Usage page) */
 .card {
   position: relative;
   transition: transform 0.25s ease, box-shadow 0.25s ease;
-  background: rgba(15, 30, 60, 0.9);
+
+  background: rgba(15, 23, 42, 0.7);   /* SAME as usage */
+  backdrop-filter: blur(14px);
+
   border-radius: 18px;
   padding: 16px;
   margin-bottom: 16px;
@@ -140,92 +129,460 @@ h2 {
     0 0 25px rgba(59,130,246,0.25),
     0 0 60px rgba(59,130,246,0.15),
     inset 0 0 15px rgba(255,255,255,0.04);
-  -webkit-user-select: none;
-  user-select: none;
-  cursor: pointer;
 }
 
+/* glowing border aura */
 .card::before {
   content: "";
   position: absolute;
   inset: -1px;
   border-radius: 18px;
+
   background: linear-gradient(
     120deg,
     rgba(59,130,246,0.6),
     rgba(168,85,247,0.4),
     rgba(59,130,246,0.6)
   );
+
   opacity: 0.25;
   filter: blur(8px);
   z-index: -1;
 }
 
-.user {
-  font-size:22px;
-  font-weight:bold;
-  margin-bottom:6px;
-}
-
-.usage {
-  font-size:20px;
-  opacity:0.8;
-}
-
-.bar-bg {
-  background: rgba(255,255,255,0.05);
-  height: 26px;
-  border-radius: 999px;
-  margin-top: 10px;
-  overflow: hidden;
-}
-
-.bar-fill {
-  box-shadow: 0 0 10px rgba(255,255,255,0.2);
-  background-blend-mode: overlay;
-  position: relative;
-  overflow: hidden;
-  height: 100%;
-  border-radius: 999px;
-  font-size: 14px;
-  font-weight: bold;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #000;
-  transition: width 0.4s ease;
-}
-
-.bar-fill::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    110deg,
-    transparent 30%,
-    rgba(255,255,255,0.2) 50%,
-    transparent 70%
-  );
-  transform: translateX(-100%);
-  animation: sweep 4.5s infinite;
-}
-
-@keyframes sweep {
-  to {
-    transform: translateX(100%);
-  }
-}
-
-.card.active {
+/* hover effect */
+.card:hover {
   transform: translateY(-4px) scale(1.01);
+
   box-shadow:
     0 0 40px rgba(59,130,246,0.45),
     0 0 80px rgba(59,130,246,0.25),
     inset 0 0 20px rgba(255,255,255,0.05);
 }
 
-.dot {
+.user {
+  font-size:20px;
+  font-weight:bold;
+  margin-bottom:8px;
+}
+
+.row {
+  display:flex;
+  gap:6px;
+  margin-top:6px;
+  align-items:center;
+}
+
+input {
+  flex:1;
+  padding:12px;          /* was 8px */
+  border-radius:8px;
+  border:none;
+  background:#0f172a;
+  color:white;
+  font-size:18px;        /* 🔥 NEW */
+}
+
+select {
+  font-size:18px;
+  padding:10px;
+}
+
+input::placeholder {
+  color:#94a3b8;
+  opacity:1;
+  font-size:16px;
+}
+
+button.action,
+button.plus-btn,
+button.delete {
+  box-shadow:
+    0 4px 10px rgba(0,0,0,0.4),
+    inset 0 1px 0 rgba(255,255,255,0.2);
+}
+
+.mac {
+  display:flex;
+  align-items:center;
+  gap:8px;
+  margin-top:6px;
+}
+
+.mac-box {
+  flex:1;
+  display:flex;
+  align-items:center;
+  justify-content: center;  /* ✅ FIXED */
+  gap: 8px;                 /* ✅ spacing between - number + */
+  background:#0b1a33;
+  padding:0 12px;
+  height:48px;
+  border-radius:10px;
+}
+
+.mac-box span {
+  font-size:20px;
+  font-weight:550;
+  letter-spacing: 0.5px;
+}
+
+.mac-box input {
+  height:100%;
+  display:flex;
+  align-items:center;
+  background:transparent;
+  border:none;
+  outline:none;
+  color:white;
+  font-size:20px;
+  font-weight:550;
+
+  width:60px;          /* ✅ fixed width */
+  text-align:center;   /* ✅ center number */
+}
+
+.mac-box small {
+  font-size:20px;
+  font-weight:550;
+  opacity:0.9;
+  margin-left:10px;
+  font-height:500;
+}
+
+/* plus button */
+.plus-btn {
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+  width:70px;
+  height:48px;
+  font-weight:bold;
+  line-height:1;
+}
+
+.mac span {
+  flex:1;
+  background:#0f172a;
+  padding:10px 12px;   /* bigger box */
+  border-radius:8px;
+  font-size:16px;      /* 🔥 bigger text */
+}
+
+.hidden { display:none; }
+
+/* 🔐 Glass login card */
+#loginBox {
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* ✅ FIXED */
+  gap: 12px;
+
+  max-width: 400px;
+  width: 90%;
+
+  margin: 0; /* ❌ remove 100px auto */
+
+  background: rgba(15, 23, 42, 0.7);
+  backdrop-filter: blur(14px);
+
+  padding: 20px;
+  border-radius: 18px;
+  text-align: center;
+
+  border: 1px solid rgba(96,165,250,0.25);
+
+  box-shadow:
+    0 0 25px rgba(59,130,246,0.25),
+    0 0 60px rgba(59,130,246,0.15),
+    inset 0 0 15px rgba(255,255,255,0.04);
+
+  position: relative;
+}
+
+/* glowing aura border */
+#loginBox::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: 18px;
+
+  background: linear-gradient(
+    120deg,
+    rgba(59,130,246,0.6),
+    rgba(168,85,247,0.4),
+    rgba(59,130,246,0.6)
+  );
+
+  opacity: 0.25;
+  filter: blur(8px);
+  z-index: -1;
+}
+
+#loginBox input,
+#loginBox button {
+  width: 100%;
+  max-width: 320px;
+  box-sizing: border-box;
+}
+
+#loginBox form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+#loginBox input {
+  width: 100%;
+  max-width: 320px;
+
+  background:#0f172a;
+  color:white;
+
+  border-radius:10px;
+  border:none;
+  outline:none;
+
+  padding:12px;
+  font-size:18px;
+
+  text-align: center;     /* ⭐ centers the dots */
+}
+
+#loginBox button {
+  height:48px;
+  font-size:18px;
+  border-radius:12px;
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+  box-shadow:
+    0 0 12px rgba(34,197,94,0.6),
+    0 4px 10px rgba(0,0,0,0.4);
+}
+
+/* 🔥 center delete button row */
+.row.center {
+  justify-content:center;
+  width:100%;          /* 🔥 ensure full width */
+}
+
+.row.center .delete {
+  width:70%;           /* 🔥 adjust width (70–90% as you like) */
+  height:44px;
+  font-size:18px;
+  border-radius:12px;
+}
+
+#loginBox h2 {
+  font-size: 28px;
+}
+
+button.loading {
+  pointer-events: none;
+  opacity: 0.9;
+  color: transparent;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 🔥 real spinner element */
+button.loading .spinner {
+  width: 20px;
+  height: 20px;
+  border: 3px solid rgba(255,255,255,0.3);
+  border-top: 3px solid white;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+button {
+  width:70px;
+  height:48px;
+  border:none;
+  border-radius:12px;
+  color:white;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:18px;
+  font-weight:bold;
+  line-height:1;
+
+  transition: all 0.2s ease;
+}
+
+/* 🟢 GREEN buttons */
+button.action,
+button.plus-btn {
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+  box-shadow:
+    0 0 10px rgba(34,197,94,0.6),
+    0 4px 10px rgba(0,0,0,0.4);
+}
+
+/* 🔴 RED buttons */
+button.delete {
+  background: linear-gradient(135deg, #ef4444, #b91c1c);
+  box-shadow:
+    0 0 10px rgba(239,68,68,0.6),
+    0 4px 10px rgba(0,0,0,0.4);
+}
+
+button:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.1);
+
+  box-shadow:
+    0 0 16px currentColor,
+    0 6px 14px rgba(0,0,0,0.5);
+}
+
+.mac {
+  gap: 10px;
+}
+
+button:active {
+  transform: scale(0.96);
+  box-shadow:
+    0 2px 4px rgba(0,0,0,0.4),
+    inset 0 2px 4px rgba(0,0,0,0.3);
+}
+
+.mac-box {
+  flex: 1;
+}
+
+/* 📊 Usage button — dark blue glow */
+a.nav-btn[href="/data/"] {
+  background: linear-gradient(135deg, #1e293b, #0f172a);
+
+  box-shadow:
+    0 0 10px rgba(59,130,246,0.5),   /* blue glow */
+    0 4px 10px rgba(0,0,0,0.4);
+
+  transition: all 0.2s ease;
+}
+
+a.nav-btn[href="/data/"]:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.1);
+
+  box-shadow:
+    0 0 16px rgba(59,130,246,0.9),
+    0 6px 14px rgba(0,0,0,0.5);
+}
+
+a.nav-btn[href="/data/"]:active {
+  transform: scale(0.95);
+
+  box-shadow:
+    0 0 6px rgba(0,0,0,0.6),
+    inset 0 0 8px rgba(0,0,0,0.6);
+}
+
+.step-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+
+  font-size: 20px;
+  font-weight: bold;
+
+  background: linear-gradient(135deg, #1e293b, #0f172a);
+
+  box-shadow:
+    0 0 6px rgba(59,130,246,0.4),
+    inset 0 0 6px rgba(255,255,255,0.05);
+
+  color: white;
+}
+
+.step-btn:hover {
+  transform: scale(1.1);
+}
+
+.step-btn {
+  touch-action: none;
+  user-select: none;
+}
+
+/* remove default number arrows */
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type=number] {
+  -moz-appearance: textfield;
+}
+
+#multiplier {
+  font-size: 20px;   /* ✅ prevents iOS zoom */
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  text-align: center;
+  pointer-events: none;   /* 🔥 THIS is key */
+}
+
+.switch {
+  position: relative;
   display: inline-block;
+  width: 46px;
+  height: 26px;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  inset: 0;
+  background-color: #374151;
+  border-radius: 999px;
+  transition: 0.25s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 20px;
+  width: 20px;
+  left: 3px;
+  top: 3px;
+  background: white;
+  border-radius: 50%;
+  transition: 0.25s;
+}
+
+input:checked + .slider {
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+  box-shadow: 0 0 10px rgba(34,197,94,0.7);
+}
+
+input:checked + .slider:before {
+  transform: translateX(20px);
+}
+
+.switch input:checked + .slider {
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+  box-shadow:
+    0 0 8px rgba(34,197,94,0.8),
+    0 0 20px rgba(34,197,94,0.4);
+}
+
+.card.reset-card .user {
+  text-align: center;
 }
 
 .paid-box {
@@ -238,341 +595,1033 @@ h2 {
   color: rgba(255,255,255,0.75);
   border: 1px solid rgba(255,255,255,0.25);
   background: rgba(255,255,255,0.05);
-
-  box-shadow:
-    inset 0 0 4px rgba(255,255,255,0.05);
 }
 
 @media (max-width:480px) {
-  .container { padding:10px; }
-  h2 { font-size:18px; }
-  .user { font-size:18px; }
-  .usage { font-size:14px; }
-  .bar-bg { height:26px; }
-  .bar-fill { line-height:18px; }
+ .nav-btn {
+    font-size:17px;
+    padding:10px 12px;
+    gap:4px;
+  }
 }
-
 </style>
 </head>
 
 <body>
 
-<div class="container">
+<div id="loginBox">
+  <h2>🔐 Admin Login</h2>
 
-<div class="header">
-  <div>
-    <h2>👥Traffic Status</h2>
-    <div style="display:flex; align-items:center; gap:6px; font-size:15px; opacity:0.75; margin-top:4px;">
-      <span id="statusDot"></span>
-      <span id="statusTime"></span>
-    </div>
-  </div>
+  <form onsubmit="login(); return false;">
+    <input type="password" id="pass" placeholder="Password">
+    <button type="submit" class="action">Login</button>
+  </form>
 
-  <a href="/data/admin/" class="admin-btn">⚙ Admin</a>
 </div>
 
-<div id="list">Loading...</div>
+<div id="adminPanel" class="container hidden">
+
+<div class="header">
+  <div class="nav-btn">
+    🔐 Admin
+    <span id="statusDot" style="margin-left:6px;">⚪</span>
+    <span id="statusTime" style="font-size:12px; opacity:0.7; margin-left:4px;"></span>
+  </div>
+
+  <a href="/data/" class="nav-btn">📊 Traffic</a>
+</div>
+
+<div class="card">
+  <div class="user">🔑 Password Change</div>
+  <div class="row">
+    <input id="oldPass" type="password" placeholder="Current password">
+  </div>
+  <div class="row">
+    <input id="newPass" type="password" placeholder="New password">
+    <button onclick="changePassword()" class="action">Save</button>
+  </div>
+</div>
+
+<div class="card">
+  <div class="user">📈 Data Multiplier</div>
+  <div class="row">
+    <div class="mac-box">
+      <button onpointerdown="startMultiplierStep(-1)" class="step-btn">−</button>
+
+      <input id="multiplier" value="1.00" readonly>
+
+      <button onpointerdown="startMultiplierStep(1)" class="step-btn">+</button>
+    </div>
+
+    <button onclick="saveMultiplier(this)" class="action">
+      <span>Save</span>
+    </button>
+  </div>
+</div>
+
+<div class="card">
+  <div class="user">🌐 DHCP Subnet</div>
+  <div class="row">
+    <input 
+      id="network"
+      placeholder="10.99.100"
+      inputmode="numeric"
+      pattern="^(\d{1,3}\.){2}\d{1,3}$"
+      maxlength="11"
+      oninput="formatNetwork(this)"
+    >
+
+    <button onclick="saveNetwork(this)" class="action">
+      <span>Save</span>
+    </button>
+  </div>
+</div>
+
+<div class="card">
+  <div class="user">📍 Firewall Zone</div>
+  <div class="row">
+    <select id="zoneSelect" style="flex:1; padding:8px; border-radius:8px; background:#0f172a; color:white;"></select>
+
+    <button onclick="saveZone(this)" class="action">
+      <span>Save</span>
+    </button>
+  </div>
+</div>
+
+<div class="card">
+  <div class="user">⏱ Quota Interval</div>
+  <div class="row">
+    <div class="mac-box">
+      <button onpointerdown="startRefreshStep(-1)" class="step-btn">−</button>
+
+      <input id="refresh" value="2" readonly>
+
+      <button onpointerdown="startRefreshStep(1)" class="step-btn">+</button>
+
+      <small>min</small>
+    </div>
+
+    <button onclick="saveRefresh(this)" class="action">
+      <span>Save</span>
+    </button>
+  </div>
+</div>
+
+<div class="card">
+  <div class="user">🛡 Admin User</div>
+  <div class="row">
+    <select id="noBlockUser" style="flex:1; padding:8px; border-radius:8px; background:#0f172a; color:white;"></select>
+    <button onclick="saveNoBlock(this)" class="action">
+      <span>Save</span>
+    </button>
+  </div>
+</div>
+
+<div class="card reset-card" style="grid-column: 1 / -1;">
+  <div class="user">⚠️ Reset All Traffic Data</div>
+
+  <div class="row center">
+    <button onclick="cleanupBandix(this)" class="delete">
+      Reset All Traffic Data
+    </button>
+  </div>
+</div>
+
+<div class="card" style="grid-column: 1 / -1;">
+  <div class="user">➕ New User</div>
+  <div class="row">
+    <input id="newUser" placeholder="New user">
+    <button onclick="addUser(this)" class="action">
+      <span>Add</span>
+    </button>
+  </div>
+</div>
+
+<div id="list"></div>
 
 </div>
 
 <script>
-const elements = {};
-let lastDataText = '';
+let adminPassword = localStorage.getItem('admin_pass') || "";
 
-function toggleCard(div) {
-  if (div.classList.contains('active')) {
-    div.classList.remove('active');
-  } else {
-    document.querySelectorAll('.card.active')
-      .forEach(c => c.classList.remove('active'));
-    div.classList.add('active');
+function startBtnLoading(btn) {
+  if (!btn) return;
+
+  btn.classList.add('loading');
+
+  // remove text
+  btn.dataset.original = btn.innerHTML;
+  btn.innerHTML = '<div class="spinner"></div>';
+}
+
+let multiplierInterval = null;
+let multiplierTimeout = null;
+let multiplierStep = null;
+
+function formatNetwork(input) {
+  let value = input.value;
+
+  // keep only numbers and dots
+  value = value.replace(/[^0-9.]/g, '');
+
+  // split into parts
+  let parts = value.split('.').slice(0, 3); // max 3 octets
+
+  // limit each octet to 0–255 and max 3 digits
+  parts = parts.map(p => {
+    if (p.length > 3) p = p.slice(0, 3);
+    let num = parseInt(p, 10);
+    if (!isNaN(num)) {
+      if (num > 255) num = 255;
+      return String(num);
+    }
+    return p;
+  });
+
+  input.value = parts.join('.');
+}
+
+let refreshInterval = null;
+let refreshTimeout = null;
+let refreshStep = null;
+
+function changeRefresh(step) {
+  const input = document.getElementById('refresh');
+  let val = parseInt(input.value) || 1;
+
+  val += step;
+
+  if (val < 1) val = 1;
+  if (val > 60) val = 60;
+
+  input.value = val;
+}
+
+function startRefreshStep(step) {
+  stopRefreshStep();
+
+  refreshStep = step;
+  changeRefresh(step);
+
+  refreshTimeout = setTimeout(() => {
+    refreshInterval = setInterval(() => {
+      changeRefresh(refreshStep);
+    }, 80);
+  }, 300);
+}
+
+function stopRefreshStep() {
+  if (refreshTimeout) {
+    clearTimeout(refreshTimeout);
+    refreshTimeout = null;
+  }
+
+  if (refreshInterval) {
+    clearInterval(refreshInterval);
+    refreshInterval = null;
+  }
+}
+
+function changeMultiplier(step) {
+  const input = document.getElementById('multiplier');
+  let val = parseFloat(input.value) || 0;
+
+  val += step * 0.01;
+
+  // clean decimals safely
+  val = Number(val.toFixed(2));
+
+  // allow values below 1
+  if (val < 0.01) val = 0.01;
+
+  input.value = val.toFixed(2);
+}
+
+function startMultiplierStep(step) {
+  stopMultiplierStep();
+
+  multiplierStep = step;
+
+  changeMultiplier(step);
+
+  multiplierTimeout = setTimeout(() => {
+    multiplierInterval = setInterval(() => {
+      changeMultiplier(multiplierStep);
+    }, 80);
+  }, 300);
+}
+
+function stopMultiplierStep() {
+  if (multiplierTimeout) {
+    clearTimeout(multiplierTimeout);
+    multiplierTimeout = null;
+  }
+
+  if (multiplierInterval) {
+    clearInterval(multiplierInterval);
+    multiplierInterval = null;
+  }
+}
+
+function stopBtnLoading(btn) {
+  if (!btn) return;
+
+  btn.classList.remove('loading');
+
+  // restore text
+  if (btn.dataset.original) {
+    btn.innerHTML = btn.dataset.original;
+  }
+}
+
+async function login() {
+  const pass = document.getElementById('pass').value;
+
+  const res = await fetch('/cgi-bin/users-pay', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      action: "login",
+      password: pass
+    })
+  });
+
+  const text = await res.text();
+  const data = JSON.parse(text.slice(text.indexOf('{')));
+
+  if (data.status !== "ok") {
+    alert("Wrong password");
+    return;
+  }
+
+  adminPassword = pass;
+  localStorage.setItem('admin_pass', pass);
+
+  document.getElementById('loginBox').style.display = 'none';
+  document.getElementById('adminPanel').classList.remove('hidden');
+
+  load();
+  checkQuotaScript();
+}
+
+let users = {};
+let paidUsers = {};
+
+function enforceFirstUserRule() {
+  const realUsers = Object.keys(users).filter(u => !u.startsWith("_"));
+
+  // If exactly 1 user and no admin set → make it admin
+  if (realUsers.length === 1 && !users._no_block) {
+    users._no_block = realUsers[0];
+    console.log("Auto-set first user as admin:", realUsers[0]);
   }
 }
 
 async function load() {
+  const res = await fetch('/data/users.json?t=' + Date.now());
+  let text = await res.text();
+
   try {
-    const usersRes = await fetch('/data/users.json?t=' + Date.now());
-    const users = await usersRes.json();
+    users = text ? JSON.parse(text) : {};
+    enforceFirstUserRule();
+  } catch (e) {
+    users = {};
+  }
 
-    const payRes = await fetch('/data/users-pay.json?t=' + Date.now());
-    let payData = {};
+  // 🔥 ALWAYS initialize (even if JSON failed)
+  let changed = false;
 
-    try {
-      payData = await payRes.json();
-    } catch(e) {}
+  if (!users._network) {
+    users._network = "10.99.100";
+    changed = true;
+  }
 
-    const dataRes = await fetch('/data/traffic-buffer.json?t=' + Date.now());
-    if (!dataRes.ok) throw new Error("HTTP " + dataRes.status);
+  if (!users._zone) {
+    users._zone = "TRAFFIC_PAGE";
+    changed = true;
+  }
 
-    const text = await dataRes.text();
+  if (changed) {
+    await saveAsync({ reload: false });
+  }
 
-    if (!text || text.trim() === "") {
-      document.getElementById('list').innerText = 'No data yet';
-      return;
-    }
-
-    let json;
-    try {
-      json = JSON.parse(text);
-      updateStatus(json.ts_ms || 0);
-    } catch (e) {
-      console.error("BAD JSON:", text);
-      document.getElementById('list').innerText = 'Invalid data';
-      return;
-    }
-
-    const snapshot = text + JSON.stringify(users) + JSON.stringify(payData.paid || {});
-
-    if (snapshot === lastDataText) {
-      document.body.classList.add('paused');
-      return;
-    }
-
-    document.body.classList.remove('paused');
-    lastDataText = snapshot;
-
-    let devices = Array.isArray(json.devices) ? json.devices : [];
-
-    devices = devices.filter(d =>
-      d.ip &&
-      !d.ip.endsWith(".1") &&
-      d.mac
-    );
-
-    let grouped = {};
-    let lastSeen = {};
-
-    devices.forEach(d => {
-      const mac = d.mac.toLowerCase();
-
-      const rx = Number(d.wan_rx_bytes || 0);
-      const tx = Number(d.wan_tx_bytes || 0);
-
-      if (!grouped[mac]) grouped[mac] = 0;
-      grouped[mac] += rx + tx;
-
-      if (!lastSeen[mac] || d.last_online_ts > lastSeen[mac]) {
-        lastSeen[mac] = d.last_online_ts;
-      }
+  // 🔥 LOAD PAID USERS
+  try {
+    const res2 = await fetch('/cgi-bin/users-pay', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        action: "get",
+        password: adminPassword
+      })
     });
 
-    const multiplier = users._multiplier || 1;
+    const text2 = await res2.text();
+    const data2 = JSON.parse(text2.slice(text2.indexOf('{')));
 
-    let userList = [];
-    let totalQuota = 0;
-
-    for (let user in users) {
-      if (user === "_multiplier" || user.startsWith("_")) continue;
-
-      let totalBytes = 0;
-      let macs = users[user].macs || [];
-      let latestSeen = 0;
-
-      macs.forEach(mac => {
-        const m = mac.toLowerCase();
-
-        totalBytes += grouped[m] || 0;
-
-        if (lastSeen[m] && lastSeen[m] > latestSeen) {
-          latestSeen = lastSeen[m];
-        }
-      });
-
-      const quota = users[user].quota ?? 1;
-      totalQuota += quota;
-
-      userList.push({
-        name: user,
-        totalBytes,
-        lastSeen: latestSeen
-      });
-    }
-
-    userList.sort((a, b) => b.totalBytes - a.totalBytes);
-
-    const list = document.getElementById('list');
-    if (list.textContent.includes('Loading')) {
-      list.textContent = '';
-    }
-
-    let grandTotalGB = 0;
-
-    userList.forEach(entry => {
-      const user = entry.name;
-
-      const now = Date.now();
-      const isOnline = entry.lastSeen && (now - entry.lastSeen <= 45000);
-      const dotClass = isOnline ? 'status-dot-green' : 'status-dot-red';
-      const statusText = isOnline ? 'Online' : 'Offline';
-
-      const totalGB = (entry.totalBytes / 1e9) * multiplier;
-      grandTotalGB += totalGB;
-
-      const quota = users[user].quota ?? 1;
-
-      let percent = quota > 0 ? (totalGB / quota) * 100 : (totalGB > 0 ? 100 : 0);
-      if (percent > 100) percent = 100;
-
-      const over = totalGB > quota;
-
-      let color = 'linear-gradient(90deg, #16a34a, #4ade80)';
-      if (percent > 70) color = 'linear-gradient(90deg, #facc15, #f97316)';
-      if (percent > 90) color = 'linear-gradient(90deg, #ef4444, #b91c1c)';
-
-      if (!elements[user]) {
-        const div = document.createElement('div');
-        div.className = 'card';
-
-        div.addEventListener('click', (e) => {
-          e.stopPropagation();
-          toggleCard(div);
-        });
-
-        div.innerHTML = `
-          <div class="user" style="display:flex; justify-content:space-between; align-items:center;">
-            <span class="name"></span>
-            <span style="display:flex; align-items:center; gap:8px; font-size:14px; opacity:0.85;">
-              <span class="paid"></span>
-              <span class="dot"></span>
-              <span class="text"></span>
-            </span>
-          </div>
-
-          <div class="usage"></div>
-
-          <div class="bar-bg">
-            <div class="bar-fill"></div>
-          </div>
-        `;
-
-        list.appendChild(div);
-
-        elements[user] = {
-          card: div,
-          name: div.querySelector('.name'),
-          usage: div.querySelector('.usage'),
-          bar: div.querySelector('.bar-fill'),
-          dot: div.querySelector('.dot'),
-          status: div.querySelector('.text'),
-          paid: div.querySelector('.paid')
-        };
-      }
-
-      const el = elements[user];
-
-      el.name.textContent = `${user} ${over ? '🔴' : ''}`;
-
-      el.paid.innerHTML = payData.paid && payData.paid[user]
-        ? '<span class="paid-box">PAID</span>'
-        : '';
-
-      el.usage.textContent =
-        `${totalGB.toFixed(2)} GB / ${quota} GB (${percent.toFixed(0)}%)`;
-
-      el.bar.style.width = percent + '%';
-      el.bar.style.background = color;
-      el.bar.textContent = percent.toFixed(0) + '%';
-
-      el.dot.className = `dot ${dotClass}`;
-      el.status.textContent = statusText;
-    });
-
-    const currentUsers = new Set(userList.map(u => u.name));
-
-    for (let user in elements) {
-      if (!currentUsers.has(user)) {
-        elements[user].card.remove();
-        delete elements[user];
-      }
-    }
-
-    const existingTotal = document.getElementById('totalCard');
-    if (existingTotal) existingTotal.remove();
-
-    const totalPercent = totalQuota > 0 ? (grandTotalGB / totalQuota) * 100 : 0;
-
-    const totalDiv = document.createElement('div');
-    totalDiv.id = 'totalCard';
-    totalDiv.className = 'card';
-    totalDiv.style.border = '1px solid rgba(96,165,250,0.5)';
-    totalDiv.style.boxShadow = '0 0 20px rgba(96,165,250,0.4)';
-    totalDiv.style.cursor = 'default';
-
-    totalDiv.innerHTML = `
-      <div class="user">📊 Total Traffic</div>
-      <div class="usage">${grandTotalGB.toFixed(2)} GB / ${totalQuota} GB (${totalPercent.toFixed(0)}%)</div>
-    `;
-
-    const fragment = document.createDocumentFragment();
-
-    userList.forEach(entry => {
-      const el = elements[entry.name];
-      fragment.appendChild(el.card);
-    });
-
-    fragment.appendChild(totalDiv);
-
-    list.innerHTML = '';
-    list.appendChild(fragment);
+    paidUsers = data2.paid || {};
 
   } catch (e) {
-    console.error("LOAD ERROR:", e);
-    document.getElementById('list').innerText = 'Error loading data';
+    paidUsers = {};
+  }
+
+  // -------------------------
+
+  document.getElementById('multiplier').value = users._multiplier || 1.00;
+  document.getElementById('network').value = users._network || "10.99.100";
+  document.getElementById('refresh').value = users._refresh || 2;
+
+  const select = document.getElementById('noBlockUser');
+  if (select) {
+    select.innerHTML = '';
+
+    for (let user in users) {
+      if (user.startsWith("_")) continue;
+
+      const opt = document.createElement('option');
+      opt.value = user;
+      opt.innerText = user;
+
+      if (users._no_block === user) {
+        opt.selected = true;
+      }
+
+      select.appendChild(opt);
+    }
+  }
+
+  // 🔥 AUTO LOAD ZONES FROM users-pay (skip WAN)
+  try {
+    const res = await fetch('/cgi-bin/users-pay', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: "zones" })
+    });
+
+    const data = await res.json();
+
+    const zoneSelect = document.getElementById('zoneSelect');
+
+    if (zoneSelect) {
+      zoneSelect.innerHTML = '';
+
+      (data.zones || []).forEach(z => {
+
+        const opt = document.createElement('option');
+        opt.value = z;
+        opt.innerText = z;
+
+        if (users._zone === z) {
+          opt.selected = true;
+        }
+
+        zoneSelect.appendChild(opt);
+      });
+    }
+
+  } catch (e) {
+    console.log("Failed to load zones", e);
+  }
+
+  const list = document.getElementById('list');
+  list.innerHTML = '';
+
+  for (let user in users) {
+    if (user.startsWith("_")) continue;
+
+    const u = users[user] || { quota:60, macs:[] };
+    const isPaid = !!paidUsers[user];
+
+    let macsHTML = '';
+    (u.macs || []).forEach(mac => {
+      macsHTML += `
+        <div class="mac">
+          <div class="mac-box">
+            <span>${mac}</span>
+          </div>
+
+          <button onclick="delMac('${user}','${mac}', this)" class="delete">⛔</button>
+        </div>
+      `;
+    });
+
+    const div = document.createElement('div');
+    div.className = 'card';
+
+    div.innerHTML = `
+      <div class="user" style="display:flex; align-items:center; gap:12px;">      
+        <span>${user}</span>
+
+        <div style="display:flex; align-items:center; gap:6px;">
+          <span class="paid-box">PAID</span>
+
+          <label class="switch">
+            <input type="checkbox"
+                   ${isPaid ? 'checked' : ''}
+                   onchange="togglePaid('${user}', this)">
+            <span class="slider"></span>
+          </label>
+        </div>
+      </div>
+
+      <div class="mac">
+        <div class="mac-box">
+          <button onpointerdown="startStep('${user}', -1)" class="step-btn">−</button>
+
+          <input 
+            id="quota-${user}" 
+            value="${u.quota}" 
+            type="number"
+            min="0"
+            step="0.1"
+            inputmode="decimal"
+          >
+
+          <button onpointerdown="startStep('${user}', 1)" class="step-btn">+</button>
+
+          <small>GB</small>
+        </div>
+
+        <button onclick="saveQuota('${user}', this)" class="action">Save</button>
+      </div>
+
+      <div class="mac">
+        <div class="mac-box">
+          <input 
+            id="mac-${user}" 
+            placeholder="aa:bb:cc:dd:ee:ff"
+            oninput="formatMac(this)"
+            onkeydown="handleMacKey(event, this)">
+        </div>
+
+        <button onclick="addMac('${user}', this)" class="action plus-btn">Add</button>
+      </div>
+
+      ${macsHTML}
+
+      <div class="row center">
+        <button onclick="delUser('${user}', this)" class="delete">Delete User</button>
+      </div>
+    `;
+
+    list.appendChild(div);
   }
 }
 
-function updateStatus(ts_ms) {
-  const dot = document.getElementById('statusDot');
-  const time = document.getElementById('statusTime');
+async function saveZone(btn) {
+  const val = document.getElementById('zoneSelect').value;
 
-  if (!dot || !time) return;
-
-  if (!ts_ms) {
-    dot.className = 'status-dot-red';
-    time.innerHTML = '';
+  if (!val) {
+    alert("Select zone");
     return;
   }
 
-  const now = Date.now();
-  const diff = now - ts_ms;
+  startBtnLoading(btn);
 
-  const TEN_MIN = 10 * 60 * 1000;
+  users._zone = val;
 
-  const date = new Date(ts_ms);
-  const formatted = date.toLocaleTimeString([], {
-    hour: '2-digit',
-    minute: '2-digit'
-  });
+  await saveAsync();
 
-  time.innerHTML = `Last Update: ${formatted}`;
-
-  if (diff < TEN_MIN) {
-    dot.className = 'status-dot-green';
-  } else {
-    dot.className = 'status-dot-red';
-  }  
+  stopBtnLoading(btn);
 }
 
-setInterval(() => {
-  if (!document.hidden) {
-    load();
-  }
-}, 5000);
-load();
+async function saveRefresh(btn) {
+  const val = parseInt(document.getElementById('refresh').value);
 
-window.addEventListener('storage', function(e) {
-  if (e.key === 'users_updated') {
-    load();
+  if (!val || val < 1) {
+    alert("Invalid refresh time");
+    return;
   }
-});
 
-document.addEventListener('visibilitychange', () => {
-  if (document.hidden) {
-    document.body.classList.add('paused');
+  startBtnLoading(btn);
+
+  users._refresh = val;
+
+  await saveAsync();
+
+  stopBtnLoading(btn);
+}
+
+async function togglePaid(user, checkbox) {
+
+  const value = checkbox.checked;
+
+  const res = await fetch('/cgi-bin/users-pay', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      action: "set_paid",
+      password: adminPassword,
+      user: user,
+      value: value
+    })
+  });
+
+  const text = await res.text();
+  const data = JSON.parse(text.slice(text.indexOf('{')));
+
+  if (data.status === "ok") {
+    paidUsers[user] = value;
   } else {
-    document.body.classList.remove('paused');
+    alert("Failed");
+
+    // revert UI
+    checkbox.checked = !value;
   }
+}
+
+async function saveNetwork(btn) {
+  const val = document.getElementById('network').value.trim();
+
+  const parts = val.split('.');
+
+  if (
+    parts.length !== 3 ||
+    parts.some(p => !/^\d{1,3}$/.test(p) || Number(p) > 255)
+  ) {
+    alert("Invalid network (example: 10.99.100)");
+    return;
+  }
+
+  startBtnLoading(btn);
+
+  users._network = val;
+
+  await saveAsync();
+
+  stopBtnLoading(btn);
+}
+
+/* 🔥 FIXED SAVE (DEBOUNCE) */
+let saveTimer = null;
+let saving = false;
+let pendingSave = false;
+
+async function saveAsync(options = {}) {
+  const reload = options.reload !== false;
+
+  if (saving) {
+    pendingSave = true;
+    return false;
+  }
+
+  saving = true;
+  let ok = false;
+
+  try {
+    do {
+      pendingSave = false;
+
+      const res = await fetch('/cgi-bin/users-save', {
+        method:'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          password: adminPassword,
+          data: users
+        })
+      });
+
+      const text = await res.text();
+
+      const jsonStart = text.indexOf('{');
+      if (jsonStart === -1) {
+        throw new Error("Invalid response");
+      }
+
+      const data = JSON.parse(text.slice(jsonStart));
+
+      if (data.status !== "ok") {
+        throw new Error(data.message || "Save failed");
+      }
+
+      ok = true;
+
+    } while (pendingSave);
+
+  } catch (e) {
+    console.error("Save failed:", e);
+    alert("Save failed");
+  }
+
+  saving = false;
+
+  if (ok && reload) {
+    await load();
+  }
+
+  return ok;
+}
+
+async function saveQuota(user, btn) {
+  startBtnLoading(btn);
+
+  const val = parseFloat(document.getElementById('quota-'+user).value);
+  users[user].quota = Math.max(0, val || 0);
+
+  await saveAsync();
+
+  stopBtnLoading(btn);
+}
+
+let stepInterval = null;
+let stepTimeout = null;
+let currentStep = null;
+let currentUser = null;
+
+function changeQuota(user, step) {
+  const input = document.getElementById('quota-' + user);
+  let val = parseFloat(input.value) || 0;
+
+  val += step;
+  if (val < 0) val = 0;
+
+  input.value = val;
+
+  // 🔥 HAPTIC FEEDBACK
+  if (navigator.vibrate) {
+    navigator.vibrate(10); // small tap
+  }
+}
+
+function startStep(user, step) {
+  stopStep(); // always reset first
+
+  currentUser = user;
+  currentStep = step;
+
+  // instant click
+  changeQuota(user, step);
+
+  // delayed repeat
+  stepTimeout = setTimeout(() => {
+    stepInterval = setInterval(() => {
+      changeQuota(currentUser, currentStep);
+    }, 80);
+  }, 300);
+}
+
+function stopStep() {
+  if (stepTimeout) {
+    clearTimeout(stepTimeout);
+    stepTimeout = null;
+  }
+
+  if (stepInterval) {
+    clearInterval(stepInterval);
+    stepInterval = null;
+  }
+
+  currentUser = null;
+  currentStep = null;
+}
+
+async function addMac(user, btn) {
+  const mac = document.getElementById('mac-'+user).value.toLowerCase().trim();
+  if (!mac) return;
+
+  // ✅ ADD THIS BLOCK HERE
+  const macRegex = /^([0-9a-f]{2}:){5}[0-9a-f]{2}$/;
+  if (!macRegex.test(mac)) {
+    alert("Invalid MAC address");
+    return;
+  }
+
+  startBtnLoading(btn);
+
+  if (!users[user].macs.includes(mac)) {
+    users[user].macs.push(mac);
+    await saveAsync();
+  }
+
+  stopBtnLoading(btn);
+}
+
+function formatMac(input) {
+  let value = input.value.toLowerCase();
+
+  // keep only hex
+  value = value.replace(/[^0-9a-f]/g, '').substring(0, 12);
+
+  let formatted = '';
+
+  for (let i = 0; i < value.length; i++) {
+    formatted += value[i];
+
+    if (i % 2 === 1 && i < 11) {
+      formatted += ':';
+    }
+  }
+
+  input.value = formatted;
+}
+
+function handleMacKey(e, input) {
+  const pos = input.selectionStart;
+
+  // 👉 skip forward over :
+  if (e.key.length === 1 && /[0-9a-fA-F]/.test(e.key)) {
+    if (input.value[pos] === ':') {
+      input.selectionStart = input.selectionEnd = pos + 1;
+    }
+  }
+
+  // 👉 backspace skip over :
+  if (e.key === 'Backspace') {
+    if (pos > 0 && input.value[pos - 1] === ':') {
+      e.preventDefault();
+      input.selectionStart = input.selectionEnd = pos - 1;
+    }
+  }
+}
+
+async function delMac(user, mac, btn) {
+  if (!confirm(`Delete MAC ${mac} from ${user}?`)) return;
+
+  startBtnLoading(btn);
+
+  users[user].macs = users[user].macs.filter(m => m !== mac);
+
+  await saveAsync();
+
+  stopBtnLoading(btn);
+}
+
+async function delUser(user, btn) {
+  if (!confirm(`Delete user "${user}"?`)) return;
+
+  startBtnLoading(btn);
+
+  try {
+    // Remove from users-pay.json paid list
+    const res = await fetch('/cgi-bin/users-pay', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        action: "set_paid",
+        password: adminPassword,
+        user: user,
+        value: false
+      })
+    });
+
+    const text = await res.text();
+    const data = JSON.parse(text.slice(text.indexOf('{')));
+
+    if (data.status !== "ok") {
+      throw new Error(data.message || "Failed to remove paid status");
+    }
+
+    delete paidUsers[user];
+    delete users[user];
+
+    // If deleted user was admin/no-block user, choose another or clear it
+    if (users._no_block === user) {
+      const remainingUsers = Object.keys(users).filter(u => !u.startsWith("_"));
+      users._no_block = remainingUsers[0] || "";
+    }
+
+    await saveAsync();
+
+  } catch (e) {
+    console.error("Delete user failed:", e);
+    alert("Delete user failed");
+  }
+
+  stopBtnLoading(btn);
+}
+
+async function addUser(btn) {
+  const rawName = document.getElementById('newUser').value.trim();
+  const name = rawName.replace(/\s+/g, "_");
+
+  if (!/^[a-zA-Z0-9_-]{1,32}$/.test(name)) {
+    alert("Use only letters, numbers, _ or -");
+    return;
+  }
+
+  startBtnLoading(btn);
+
+  if (!users[name]) {
+    users[name] = { quota: 60, macs: [] };
+
+    const realUsers = Object.keys(users).filter(u => !u.startsWith("_"));
+    if (realUsers.length === 1) {
+      users._no_block = name;
+    }
+
+    await saveAsync();
+  }
+
+  stopBtnLoading(btn);
+}
+
+async function cleanupBandix(btn) {
+  if (!confirm("⚠️ This will delete all files in /usr/share/bandix. Continue?")) return;
+  if (!confirm("🚨 FINAL WARNING: This cannot be undone. Continue?")) return;
+
+  startBtnLoading(btn); // 🔥 spinner ON
+
+  try {
+    const res = await fetch('/cgi-bin/users-save', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        action: "cleanup",
+        password: adminPassword
+      })
+    });
+
+    const text = await res.text();
+    const data = JSON.parse(text.slice(text.indexOf('{')));
+
+    if (data.status !== "ok") {
+      throw new Error(data.message || "failed");
+    }
+
+  } catch (e) {
+    console.error("Cleanup failed:", e);
+    alert("Cleanup failed");
+  }
+
+  stopBtnLoading(btn); // 🔥 spinner OFF
+}
+
+async function saveMultiplier(btn) {
+  const val = parseFloat(document.getElementById('multiplier').value);
+
+  if (isNaN(val) || val < 0.01) {
+    alert("Multiplier must be at least 0.01");
+    return;
+  }
+
+  startBtnLoading(btn);
+
+  users._multiplier = val;
+
+  await saveAsync();
+
+  stopBtnLoading(btn);
+}
+
+async function changePassword() {
+  const oldPass = document.getElementById('oldPass').value;
+  const newPass = document.getElementById('newPass').value;
+
+  if (oldPass !== adminPassword) {
+    alert("Wrong current password");
+    return;
+  }
+
+  if (!newPass) {
+    alert("Enter new password");
+    return;
+  }
+
+  try {
+    const res = await fetch('/cgi-bin/users-pay', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        action: "set_password",
+        password: adminPassword,
+        new: newPass
+      })
+    });
+
+    const data = await res.json();
+
+    if (data.status === "ok") {
+      adminPassword = newPass;
+      localStorage.setItem('admin_pass', newPass);
+
+      // ✅ clear inputs
+      document.getElementById('oldPass').value = '';
+      document.getElementById('newPass').value = '';
+
+      // ✅ success prompt
+      alert("✅ Password changed successfully");
+
+    } else {
+      alert("❌ Failed to change password");
+    }
+
+  } catch (e) {
+    alert("⚠️ Error: " + e.message);
+  }
+}
+
+async function checkQuotaScript() {
+  try {
+    const res = await fetch('/data/trafficquota.log?t=' + Date.now());
+    const text = await res.text();
+
+    const dot = document.getElementById('statusDot');
+    const time = document.getElementById('statusTime');
+
+    // 🔥 FIX: skip empty lines
+    const firstLine = text.split('\n').find(line => line.trim() !== '');
+
+    const match = firstLine && firstLine.match(/QUOTA RUN (.+)/);
+
+    if (!match) {
+      dot.innerHTML = '⚪';
+      time.innerHTML = '';
+      return;
+    }
+
+    // keep your UTC-safe parsing (or simple version if working)
+    const raw = match[1].replace('UTC', 'GMT');
+    const date = new Date(raw);
+
+    if (isNaN(date.getTime())) {
+      dot.innerHTML = '⚪';
+      time.innerHTML = '';
+      return;
+    }
+
+    const diff = Date.now() - date.getTime();
+    const TEN_MIN = 10 * 60 * 1000;
+
+    const formatted = date.toLocaleTimeString([], {
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false
+    });
+
+    time.innerHTML = "Last Quota: " + formatted;
+    dot.innerHTML = diff < TEN_MIN ? '🟢' : '🔴';
+
+  } catch (e) {
+    document.getElementById('statusDot').innerHTML = '⚪';
+    document.getElementById('statusTime').innerHTML = '';
+  }
+}
+
+async function saveNoBlock(btn) {
+  users._no_block = document.getElementById('noBlockUser').value;
+
+  startBtnLoading(btn);
+  await saveAsync();
+  stopBtnLoading(btn);
+}
+
+// run when page loads
+window.addEventListener('load', () => {
+  checkQuotaScript();
 });
+
+// run every 5 seconds
+setInterval(checkQuotaScript, 5000);
+
+window.addEventListener('pointerup', stopStep);
+window.addEventListener('pointercancel', stopStep);
+window.addEventListener('blur', stopStep);
+window.addEventListener('pointerup', stopMultiplierStep);
+window.addEventListener('pointercancel', stopMultiplierStep);
+window.addEventListener('blur', stopMultiplierStep);
+window.addEventListener('pointerup', stopRefreshStep);
+window.addEventListener('pointercancel', stopRefreshStep);
+window.addEventListener('blur', stopRefreshStep);
 </script>
 
 </body>
