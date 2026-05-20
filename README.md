@@ -6,7 +6,7 @@
 
 <br>
 
-I have just made an app that is based on Traffic Push URL of **Bandix**.
+I have just made an app that is based on Traffic Push URL of timsaya's **openwrt-bandix**.
 
 It receives all the metrics from Bandix and displays them on an external page, accesible for all connected clients.
 
