@@ -180,5 +180,5 @@ Everything is designed to operate with minimal flash storage wear.
 <br>
 
 ## Credits
-All was possiblr due to timsaya’s **Bandix**:
+All was possible due to timsaya’s **Bandix**:
 https://github.com/timsaya/openwrt-bandix 
