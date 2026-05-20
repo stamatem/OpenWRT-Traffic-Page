@@ -1,4 +1,8 @@
-## Traffic-Page Installation Guide
+## Traffic Information Page and Data Quota Enforcement 
+
+<br>
+
+## Installation Guide
 
 <br>
 
@@ -156,6 +160,8 @@ The PAID switch is used to mark users who have completed payment.
 ### Reset All Traffic Data
 The Reset All Traffic Data button deletes all contents of:
 /usr/share/bandix
+
+<br>
 
 Everything is designed to operate with minimal flash storage wear.
 
