@@ -917,17 +917,6 @@ function enforceFirstUserRule() {
   }
 }
 
-async function load() {
-  const res = await fetch('/data/users.json?t=' + Date.now());
-  let text = await res.text();
-
-  try {
-    users = text ? JSON.parse(text) : {};
-    enforceFirstUserRule();
-  } catch (e) {
-    users = {};
-  }
-
 function formatGbInput(input) {
   let value = input.value;
 
@@ -945,6 +934,17 @@ function formatGbInput(input) {
 
   input.value = value;
 }
+
+async function load() {
+  const res = await fetch('/data/users.json?t=' + Date.now());
+  let text = await res.text();
+
+  try {
+    users = text ? JSON.parse(text) : {};
+    enforceFirstUserRule();
+  } catch (e) {
+    users = {};
+  }
   
   // 🔥 ALWAYS initialize (even if JSON failed)
   let changed = false;
