@@ -1,12 +1,12 @@
-## Bandix + Traffic-Page Installation Guide
+## Traffic-Page Installation Guide
 
 <br>
 
 I have just made an app that is based on Traffic Push URL of **Bandix**.
 
-It receives all the metrics from Bandix and displays them on a page.
+It receives all the metrics from Bandix and displays them on an external page, accesible for all connected clients.
 
-Additionally it has a Data Quota engine.
+Additionally it has a Data Quota engine that blocks Internet access for users that reached the allocated quota.
 
 <br>
 
@@ -174,5 +174,5 @@ Everything is designed to operate with minimal flash storage wear.
 <br>
 
 ## Credits
-All credits go to timsaya’s **Bandix**:
+All was possiblr due to timsaya’s **Bandix**:
 https://github.com/timsaya/openwrt-bandix 
