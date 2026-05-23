@@ -501,7 +501,7 @@ async function load() {
 
     totalDiv.innerHTML = `
       <div class="user">📊 Total Traffic</div>
-      <div class="usage">${grandTotalGB.toFixed(2)} GB / ${totalQuota} GB (${totalPercent.toFixed(0)}%)</div>
+      <div class="usage">${grandTotalGB.toFixed(2)} GB / ${totalQuota.toFixed(2)} GB (${totalPercent.toFixed(0)}%)</div>
     `;
 
     const fragment = document.createDocumentFragment();
