@@ -184,7 +184,7 @@ add_dhcp_leases() {
         $1 != "" { print "delete dhcp.@host[" $1 "]" }
     ' > "$TMP_UCI"
 
-    awk -F'|' -v network="$NETWORK" '
+    awk -F'|' -v network="$NETWORK" -v max_macs="$MAX_MACS_PER_USER" '
         $1 == "META" { next }
         {
             user=$1
@@ -197,7 +197,12 @@ add_dhcp_leases() {
                 user_index++
             }
 
+            if (mac_index >= max_macs) {
+                next
+            }
+
             # preferred IP inside block
+            last = 0
             preferred = base + mac_index
 
             # use preferred if free
@@ -258,7 +263,7 @@ add_dhcp_leases() {
 }
 
 generate_dhcp_fp() {
-    awk -F'|' '
+    awk -F'|' -v max_macs="$MAX_MACS_PER_USER" '
         function checked_network() {
             if (!network_checked) {
                 if (network !~ /^[0-9]+\.[0-9]+\.[0-9]+$/)
@@ -288,6 +293,11 @@ generate_dhcp_fp() {
                 user_index++
             }
 
+            if (mac_index >= max_macs) {
+                next
+            }
+
+            last = 0
             preferred = base + mac_index
 
             if (preferred >= 10 && preferred <= 254 && !used[preferred]) {
@@ -531,9 +541,11 @@ if [ "$NEW_DHCP_FP" != "$OLD_DHCP_FP" ] || [ "$NEW_DHCP_FP" != "$ACTUAL_DHCP_FP"
         echo "$NEW_DHCP_FP" > "$DHCP_FP_FILE"
 
     # Ensure dynamicdhcp is disabled on TRAFFIC_PAGE (only if missing)
-    if ! uci -q get dhcp.TRAFFIC_PAGE.dynamicdhcp >/dev/null 2>&1; then
+    if [ "$(uci -q get dhcp.TRAFFIC_PAGE.dynamicdhcp 2>/dev/null)" != "0" ]; then
         uci set dhcp.TRAFFIC_PAGE.dynamicdhcp='0'
         uci commit dhcp
+        ubus call service reload '{"name":"dnsmasq"}' >/dev/null 2>&1 \
+            || /etc/init.d/dnsmasq restart >/dev/null 2>&1
     fi
 
     else
