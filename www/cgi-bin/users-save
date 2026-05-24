@@ -18,6 +18,7 @@ CACHE="$TMP_BASE/traffic.cache"
 TMP_UCI="$TMP_BASE/traffic.uci"
 MAX_SIZE=65536
 MAX_MACS_PER_USER=5
+MAX_USERS=49
 
 echo "RUN $(date)" > "$LOG"
 
@@ -492,6 +493,17 @@ if ! jq -e --argjson max "$MAX_MACS_PER_USER" '
     | length == 0
 ' "$TMP_FILE" >/dev/null 2>&1; then
     respond '{"status":"error","message":"max_macs_per_user"}'
+    exit 1
+fi
+
+if ! jq -e --argjson max "$MAX_USERS" '
+    [
+        to_entries[]
+        | select((.key | tostring | startswith("_")) | not)
+    ]
+    | length <= $max
+' "$TMP_FILE" >/dev/null 2>&1; then
+    respond '{"status":"error","message":"max_users"}'
     exit 1
 fi
 
