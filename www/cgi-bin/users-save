@@ -17,6 +17,7 @@ POST_FILE="$TMP_BASE/users.post.$$"
 CACHE="$TMP_BASE/traffic.cache"
 TMP_UCI="$TMP_BASE/traffic.uci"
 MAX_SIZE=65536
+MAX_MACS_PER_USER=5
 
 echo "RUN $(date)" > "$LOG"
 
@@ -459,6 +460,29 @@ jq -e . "$TMP_FILE" >/dev/null 2>&1 || {
     respond '{"status":"error","message":"invalid_json"}'
     exit 1
 }
+
+if ! jq -e --argjson max "$MAX_MACS_PER_USER" '
+    [
+        to_entries[]
+        | select((.key | tostring | startswith("_")) | not)
+        | .value as $value
+        | (if ($value | type) == "object" then $value else {} end) as $obj
+        | (
+            if (($obj.macs | type) == "array") then
+                ($obj.macs | length)
+            elif (($obj.macs | type) == "string") or (($obj.mac | type) == "string") then
+                1
+            else
+                0
+            end
+        ) as $mac_count
+        | select($mac_count > $max)
+    ]
+    | length == 0
+' "$TMP_FILE" >/dev/null 2>&1; then
+    respond '{"status":"error","message":"max_macs_per_user"}'
+    exit 1
+fi
 
 mkdir -p /www/data
 
