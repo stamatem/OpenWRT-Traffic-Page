@@ -905,6 +905,7 @@ async function login() {
 }
 
 let users = {};
+const MAX_MACS_PER_USER = 5;
 let paidUsers = {};
 
 function enforceFirstUserRule() {
@@ -1336,13 +1337,19 @@ function stopStep() {
 }
 
 async function addMac(user, btn) {
-  const mac = document.getElementById('mac-'+user).value.toLowerCase().trim();
+  const mac = document.getElementById('mac-' + user).value.toLowerCase().trim();
   if (!mac) return;
 
-  // ✅ ADD THIS BLOCK HERE
   const macRegex = /^([0-9a-f]{2}:){5}[0-9a-f]{2}$/;
   if (!macRegex.test(mac)) {
     alert("Invalid MAC address");
+    return;
+  }
+
+  users[user].macs = users[user].macs || [];
+
+  if (!users[user].macs.includes(mac) && users[user].macs.length >= MAX_MACS_PER_USER) {
+    alert("Maximum 5 MAC addresses per user");
     return;
   }
 
