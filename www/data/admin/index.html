@@ -929,6 +929,7 @@ async function login() {
 
 let users = {};
 const MAX_MACS_PER_USER = 5;
+const MAX_USERS = 49;
 let paidUsers = {};
 
 function enforceFirstUserRule() {
@@ -1488,6 +1489,13 @@ async function addUser(btn) {
 
   if (!/^[a-zA-Z0-9_-]{1,32}$/.test(name)) {
     alert("Use only letters, numbers, _ or -");
+    return;
+  }
+
+  const realUsers = Object.keys(users).filter(u => !u.startsWith("_"));
+
+  if (!users[name] && realUsers.length >= MAX_USERS) {
+    alert("Maximum 49 users allowed");
     return;
   }
 
