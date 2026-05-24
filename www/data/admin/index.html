@@ -202,6 +202,27 @@ button.delete {
     inset 0 1px 0 rgba(255,255,255,0.2);
 }
 
+.mac.saved-mac .mac-number {
+  flex: 0 0 28px;
+  background: transparent;
+  padding: 0;
+  text-align: right;
+  color: white;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.mac.saved-mac .mac-box {
+  justify-content: flex-start;
+  border: 1px solid rgba(255,255,255,0.35);
+}
+
+.mac.saved-mac .mac-address {
+  background: transparent;
+  padding: 0;
+  color: white;
+}
+  
 .mac {
   display:flex;
   align-items:center;
@@ -1052,11 +1073,13 @@ async function load() {
     const isPaid = !!paidUsers[user];
 
     let macsHTML = '';
-    (u.macs || []).forEach(mac => {
+    (u.macs || []).forEach((mac, index) => {
       macsHTML += `
-        <div class="mac">
+        <div class="mac saved-mac">
+          <span class="mac-number">${index + 1}.</span>
+
           <div class="mac-box">
-            <span>${mac}</span>
+            <span class="mac-address">${mac}</span>
           </div>
 
           <button onclick="delMac('${user}','${mac}', this)" class="delete">⛔</button>
